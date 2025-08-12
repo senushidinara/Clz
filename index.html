@@ -1,469 +1,741 @@
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: 'Segoe UI', system-ui, sans-serif;
-    }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroMind Elite | Next-Gen Cognitive Enhancement</title>
     
-    body {
-        background: linear-gradient(135deg, var(--darker) 0%, #1e1e2e 100%);
-        color: var(--text);
-        min-height: 100vh;
-        overflow-x: hidden;
-        background-image: 
-            radial-gradient(circle at 10% 20%, rgba(106, 90, 249, 0.15) 0%, transparent 20%),
-            radial-gradient(circle at 90% 80%, rgba(66, 184, 131, 0.15) 0%, transparent 20%);
-        position: relative;
-    }
-    
-    body::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: 
-            radial-gradient(circle at 20% 30%, rgba(106, 90, 249, 0.1) 0%, transparent 30%),
-            radial-gradient(circle at 80% 70%, rgba(66, 184, 131, 0.1) 0%, transparent 30%);
-        z-index: -1;
-        animation: pulse 15s infinite alternate;
-    }
-    
-    @keyframes pulse {
-        0% { opacity: 0.5; }
-        100% { opacity: 1; }
-    }
-    
-    .app-container {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 2rem;
-    }
-    
-    /* Header Styles */
-    header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem 0;
-        margin-bottom: 2rem;
-        position: relative;
-    }
-    
-    .logo {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        font-size: 1.8rem;
-        font-weight: 800;
-        background: linear-gradient(45deg, var(--primary-light), var(--secondary));
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-    }
-    
-    .logo i {
-        font-size: 2.2rem;
-    }
-    
-    .user-profile {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-    
-    .avatar {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, var(--primary), var(--secondary));
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        font-size: 1.2rem;
-    }
-    
-    .user-info h3 {
-        font-weight: 600;
-        margin-bottom: 0.25rem;
-    }
-    
-    .user-info p {
-        font-size: 0.9rem;
-        color: var(--text-muted);
-    }
-    
-    /* Navigation */
-    .nav-tabs {
-        display: flex;
-        background: var(--glass);
-        border-radius: 16px;
-        padding: 0.5rem;
-        margin: 2rem 0;
-        backdrop-filter: blur(10px);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    }
-    
-    .tab-btn {
-        flex: 1;
-        padding: 1rem;
-        background: transparent;
-        border: none;
-        color: var(--text);
-        font-weight: 600;
-        border-radius: 12px;
-        cursor: pointer;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0.5rem;
-        transition: all 0.3s ease;
-    }
-    
-    .tab-btn:hover {
-        background: rgba(255, 255, 255, 0.1);
-    }
-    
-    .tab-btn.active {
-        background: var(--primary);
-        box-shadow: 0 5px 15px rgba(106, 90, 249, 0.3);
-    }
-    
-    .tab-btn i {
-        font-size: 1.4rem;
-    }
-    
-    /* Main Content */
-    .tab-content {
-        display: none;
-        animation: fadeIn 0.5s;
-    }
-    
-    .tab-content.active {
-        display: block;
-    }
-    
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    
-    /* Card Styles */
-    .card-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
-    
-    .card {
-        background: var(--card-bg);
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        backdrop-filter: blur(10px);
-        border: 1px solid var(--border);
-    }
-    
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-    }
-    
-    .card-header {
-        padding: 1.5rem;
-        border-bottom: 1px solid var(--border);
-        background: rgba(0, 0, 0, 0.2);
-    }
-    
-    .card-title {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        font-size: 1.25rem;
-        font-weight: 600;
-    }
-    
-    .card-title i {
-        color: var(--primary-light);
-    }
-    
-    .card-body {
-        padding: 1.5rem;
-    }
-    
-    /* Brain Visualization */
-    .brain-visualization {
-        width: 100%;
-        height: 300px;
-        position: relative;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    
-    .brain-lobe {
-        position: absolute;
-        border-radius: 50%;
-        opacity: 0.7;
-        mix-blend-mode: screen;
-    }
-    
-    .frontal {
-        width: 180px;
-        height: 180px;
-        background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
-        top: 20%;
-        left: 50%;
-        transform: translateX(-50%);
-        animation: pulse 3s infinite;
-    }
-    
-    .temporal {
-        width: 140px;
-        height: 140px;
-        background: radial-gradient(circle, var(--secondary) 0%, transparent 70%);
-        top: 50%;
-        left: 20%;
-        animation: pulse 3s infinite 0.5s;
-    }
-    
-    .parietal {
-        width: 140px;
-        height: 140px;
-        background: radial-gradient(circle, var(--tertiary) 0%, transparent 70%);
-        top: 50%;
-        right: 20%;
-        animation: pulse 3s infinite 0.8s;
-    }
-    
-    .occipital {
-        width: 120px;
-        height: 120px;
-        background: radial-gradient(circle, #9d4edd 0%, transparent 70%);
-        bottom: 10%;
-        left: 50%;
-        transform: translateX(-50%);
-        animation: pulse 3s infinite 1.1s;
-    }
-    
-    /* Stats and Progress */
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 1rem;
-        margin: 1.5rem 0;
-    }
-    
-    .stat-card {
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 16px;
-        padding: 1.5rem;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
-    
-    .stat-value {
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin: 0.5rem 0;
-        background: linear-gradient(45deg, var(--primary-light), var(--secondary));
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-    }
-    
-    .stat-label {
-        font-size: 0.9rem;
-        color: var(--text-muted);
-    }
-    
-    /* Game Section */
-    .game-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 2rem;
-        padding: 2rem;
-    }
-    
-    .game-board {
-        width: 100%;
-        max-width: 600px;
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 1rem;
-    }
-    
-    .game-card {
-        aspect-ratio: 1;
-        border-radius: 12px;
-        background: var(--glass);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        transform-style: preserve-3d;
-        transform: rotateY(180deg);
-    }
-    
-    .game-card.flipped {
-        transform: rotateY(0deg);
-        background: rgba(255, 255, 255, 0.15);
-    }
-    
-    .game-card.matched {
-        background: var(--success);
-        opacity: 0.7;
-    }
-    
-    .game-controls {
-        display: flex;
-        gap: 1rem;
-        margin-top: 1rem;
-    }
-    
-    .btn {
-        padding: 0.8rem 1.5rem;
-        border-radius: 12px;
-        border: none;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        background: var(--primary);
-        color: white;
-    }
-    
-    .btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 5px 15px rgba(106, 90, 249, 0.4);
-    }
-    
-    .btn-secondary {
-        background: var(--glass);
-        color: var(--text);
-    }
-    
-    /* Footer */
-    footer {
-        text-align: center;
-        padding: 2rem;
-        color: var(--text-muted);
-        font-size: 0.9rem;
-        margin-top: 2rem;
-        border-top: 1px solid var(--border);
-    }
-    
-    /* Responsive */
-    @media (max-width: 768px) {
+    <!-- External Libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --primary: #8e44ad;
+            --primary-light: #9b59b6;
+            --secondary: #2980b9;
+            --tertiary: #16a085;
+            --dark: #2c3e50;
+            --darker: #233140;
+            --card-bg: rgba(52, 73, 94, 0.6);
+            --glass: rgba(255, 255, 255, 0.08);
+            --text: #ecf0f1;
+            --text-muted: #bdc3c7;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #c0392b;
+            --border: rgba(255, 255, 255, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--darker) 0%, #34495e 100%);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 15% 25%, rgba(142, 68, 173, 0.2) 0%, transparent 30%),
+                radial-gradient(circle at 85% 75%, rgba(41, 128, 185, 0.2) 0%, transparent 30%);
+            z-index: -1;
+            animation: background-pulse 20s infinite alternate;
+        }
+
+        @keyframes background-pulse {
+            from { opacity: 0.6; }
+            to { opacity: 1; }
+        }
+
         .app-container {
-            padding: 1rem;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
         }
-        
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .logo i {
+            color: var(--primary-light);
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .user-profile { display: flex; align-items: center; gap: 1rem; }
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.5rem;
+            border: 2px solid var(--primary-light);
+        }
+        .user-info h3 { font-weight: 600; }
+        .user-info p { color: var(--text-muted); }
+
         .nav-tabs {
-            overflow-x: auto;
+            display: flex;
+            background: var(--glass);
+            border-radius: 12px;
             padding: 0.5rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            flex-wrap: wrap;
         }
-        
+
         .tab-btn {
-            min-width: 100px;
+            flex: 1;
+            padding: 1rem;
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+            min-width: 140px;
         }
-        
+        .tab-btn:hover { background: rgba(255, 255, 255, 0.1); }
+        .tab-btn.active {
+            background: var(--primary);
+            box-shadow: 0 4px 15px rgba(142, 68, 173, 0.4);
+        }
+
+        .tab-content { display: none; animation: fadeIn 0.6s; }
+        .tab-content.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+        }
+        .card:hover { transform: translateY(-8px); box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3); }
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+        .card-header i { color: var(--primary-light); }
+        .card-body { padding: 1.5rem; }
+
+        .brain-visualization {
+            width: 100%;
+            min-height: 320px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .brain-lobe {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.6;
+            mix-blend-mode: screen;
+            animation: pulse 4s infinite alternate;
+        }
+        .frontal { width: 200px; height: 200px; background: radial-gradient(circle, var(--primary) 0%, transparent 70%); top: 15%; left: 50%; transform: translateX(-50%); animation-delay: 0s; }
+        .temporal { width: 160px; height: 160px; background: radial-gradient(circle, var(--secondary) 0%, transparent 70%); top: 45%; left: 15%; animation-delay: 0.5s; }
+        .parietal { width: 160px; height: 160px; background: radial-gradient(circle, var(--tertiary) 0%, transparent 70%); top: 45%; right: 15%; animation-delay: 1s; }
+        .occipital { width: 140px; height: 140px; background: radial-gradient(circle, var(--warning) 0%, transparent 70%); bottom: 10%; left: 50%; transform: translateX(-50%); animation-delay: 1.5s; }
+        @keyframes pulse {
+            from { transform: scale(0.95) translateX(-50%); opacity: 0.5; }
+            to { transform: scale(1.05) translateX(-50%); opacity: 0.7; }
+        }
+        .brain-lobe.parietal, .brain-lobe.temporal {
+             animation-name: pulse-side;
+        }
+        @keyframes pulse-side {
+            from { transform: scale(0.95); opacity: 0.5; }
+            to { transform: scale(1.05); opacity: 0.7; }
+        }
+
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+        .stat-card { background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 1.5rem; text-align: center; }
+        .stat-value { font-size: 2.2rem; font-weight: 700; color: var(--primary-light); }
+        .stat-label { color: var(--text-muted); }
+
+        .game-container { text-align: center; }
         .game-board {
-            grid-template-columns: repeat(3, 1fr);
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin: 2rem auto;
+            max-width: 500px;
+            perspective: 1000px;
         }
-    }
-    
-    /* Animations */
-    @keyframes float {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
-    }
-    
-    .floating {
-        animation: float 6s ease-in-out infinite;
-    }
-    
-    /* Progress Bars */
-    .progress-container {
-        margin: 1.5rem 0;
-    }
-    
-    .progress-bar {
-        height: 10px;
-        background: var(--glass);
-        border-radius: 5px;
-        overflow: hidden;
-        margin-top: 0.5rem;
-    }
-    
-    .progress-fill {
-        height: 100%;
-        border-radius: 5px;
-        background: linear-gradient(90deg, var(--primary), var(--secondary));
-        width: 0;
-        transition: width 1.5s ease-in-out;
-    }
-    
-    .progress-info {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 0.25rem;
-        font-size: 0.9rem;
-        color: var(--text-muted);
-    }
-    
-    /* Coach Messages */
-    .coach-message {
-        position: fixed;
-        bottom: 20px;
-        left: 20px;
-        background: var(--card-bg);
-        border-radius: 16px;
-        padding: 1rem;
-        max-width: 320px;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        border: 1px solid var(--border);
-        transform: translateY(100px);
-        opacity: 0;
-        animation: slideUp 0.5s forwards;
-        z-index: 100;
-    }
-    
-    @keyframes slideUp {
-        to {
-            transform: translateY(0);
-            opacity: 1;
+        .game-card {
+            aspect-ratio: 1;
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
         }
-    }
-    
-    .coach-avatar {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, var(--primary), var(--secondary));
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-    }
-    
-    .coach-content {
-        flex: 1;
-    }
-    
-    .coach-content p {
-        font-size: 0.95rem;
-        font-style: italic;
-    }
-</style>
+        .game-card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            font-size: 2.5rem;
+        }
+        .game-card-front {
+            background: var(--glass);
+        }
+        .game-card-back {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            transform: rotateY(180deg);
+        }
+        .game-card.is-flipped {
+            transform: rotateY(180deg);
+        }
+        .game-card.is-matched .game-card-back {
+            background: var(--success);
+            opacity: 0.7;
+        }
+
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--primary);
+            color: white;
+            margin: 0.5rem;
+        }
+        .btn:hover { transform: translateY(-4px); box-shadow: 0 6px 20px rgba(142, 68, 173, 0.5); }
+        .btn-secondary { background: var(--glass); color: var(--text); }
+        .btn:disabled { background: var(--text-muted); cursor: not-allowed; }
+
+        #breathing-circle {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--primary-light), var(--secondary));
+            margin: 2rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 50px rgba(142, 68, 173, 0.5);
+            transition: transform 4s ease-in-out;
+        }
+        #breathing-text { font-size: 1.8rem; font-weight: bold; transition: opacity 1s; }
+
+        footer { text-align: center; padding: 2rem; color: var(--text-muted); margin-top: 3rem; border-top: 1px solid var(--border); }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .toggle-switch-container { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+        .toggle-switch { position: relative; display: inline-block; width: 60px; height: 34px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #4a4a4a; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(26px); }
+
+        .community-post {
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--secondary);
+        }
+        .community-post h4 { color: var(--primary-light); }
+        .community-post p { margin: 0.5rem 0; }
+        .community-post-footer { font-size: 0.8rem; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+    <!-- Audio elements for sound effects -->
+    <audio id="click-sound" src="https://www.soundjay.com/buttons/sounds/button-16.mp3" preload="auto"></audio>
+    <audio id="match-sound" src="https://www.soundjay.com/buttons/sounds/button-7.mp3" preload="auto"></audio>
+    <audio id="win-sound" src="https://www.soundjay.com/misc/sounds/magic-chime-01.mp3" preload="auto"></audio>
+
+    <div class="app-container">
+        <header>
+            <div class="logo"><i class="fas fa-brain"></i> NeuroMind Elite</div>
+            <div class="user-profile">
+                <div class="avatar">C</div>
+                <div class="user-info">
+                    <h3>Cogninaut</h3>
+                    <p>Level 15 Master</p>
+                </div>
+            </div>
+        </header>
+
+        <nav class="nav-tabs">
+            <button class="tab-btn active" data-tab="dashboard"><i class="fas fa-home"></i> Dashboard</button>
+            <button class="tab-btn" data-tab="training"><i class="fas fa-gamepad"></i> Training</button>
+            <button class="tab-btn" data-tab="analysis"><i class="fas fa-wave-square"></i> Analysis</button>
+            <button class="tab-btn" data-tab="progress"><i class="fas fa-chart-line"></i> Progress</button>
+            <button class="tab-btn" data-tab="mindfulness"><i class="fas fa-spa"></i> Mindfulness</button>
+            <button class="tab-btn" data-tab="community"><i class="fas fa-users"></i> Community</button>
+            <button class="tab-btn" data-tab="settings"><i class="fas fa-cog"></i> Settings</button>
+        </nav>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-header"><i class="fas fa-brain"></i> <h2>Cognitive Profile</h2></div>
+                    <div class="card-body">
+                        <div class="brain-visualization">
+                            <div class="brain-lobe frontal"></div>
+                            <div class="brain-lobe temporal"></div>
+                            <div class="brain-lobe parietal"></div>
+                            <div class="brain-lobe occipital"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><i class="fas fa-tasks"></i> <h2>Today's Goals</h2></div>
+                    <div class="card-body">
+                         <p>Your progress on today's recommended activities.</p>
+                         <!-- Progress bars can be dynamically generated here -->
+                    </div>
+                </div>
+                 <div class="card">
+                    <div class="card-header"><i class="fas fa-chart-pie"></i> <h2>Activity Overview</h2></div>
+                    <div class="card-body"><canvas id="activityChart"></canvas></div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header"><i class="fas fa-chart-bar"></i> <h2>Weekly Performance</h2></div>
+                <div class="card-body"><canvas id="performanceChart"></canvas></div>
+            </div>
+        </div>
+
+        <!-- Training Tab -->
+        <div id="training" class="tab-content">
+            <div class="card">
+                <div class="card-header"><i class="fas fa-memory"></i> <h2>Memory Matrix</h2></div>
+                <div class="card-body game-container">
+                    <div class="stats-grid">
+                        <div class="stat-card"><div class="stat-value" id="game-score">0</div><div class="stat-label">Score</div></div>
+                        <div class="stat-card"><div class="stat-value" id="game-time">--</div><div class="stat-label">Time Left</div></div>
+                        <div class="stat-card"><div class="stat-value" id="game-moves">0</div><div class="stat-label">Moves</div></div>
+                    </div>
+                    <div class="game-board" id="game-board"></div>
+                    <div class="game-controls">
+                        <button class="btn" id="start-game-btn"><i class="fas fa-play"></i> Start Game</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analysis Tab -->
+        <div id="analysis" class="tab-content">
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-header"><i class="fas-fa-brain-circuit"></i><h2>Brainwave Distribution</h2></div>
+                    <div class="card-body"><canvas id="eegChart"></canvas></div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><i class="fas fa-wave-pulse"></i><h2>Real-time EEG Feed</h2></div>
+                    <div class="card-body"><canvas id="waveformChart"></canvas></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Progress Tab -->
+        <div id="progress" class="tab-content">
+             <div class="card">
+                <div class="card-header"><i class="fas fa-chart-line"></i> <h2>Cognitive Skill Trends</h2></div>
+                <div class="card-body"><canvas id="progressChart"></canvas></div>
+            </div>
+        </div>
+
+        <!-- Mindfulness Tab -->
+        <div id="mindfulness" class="tab-content">
+             <div class="card">
+                <div class="card-header"><i class="fas fa-wind"></i><h2>Breathing Exercise</h2></div>
+                <div class="card-body" style="text-align: center;">
+                    <div id="breathing-circle">
+                        <span id="breathing-text">Ready?</span>
+                    </div>
+                    <button class="btn" id="start-breathing-btn"><i class="fas fa-play"></i> Start 4-7-8 Cycle</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Community Tab -->
+        <div id="community" class="tab-content">
+            <div class="card">
+                <div class="card-header"><i class="fas fa-users"></i><h2>Community Feed</h2></div>
+                <div class="card-body">
+                    <div class="community-post">
+                        <h4><i class="fas fa-trophy"></i> Alex reached Level 20!</h4>
+                        <p>"Just hit level 20 on the Memory Matrix. The key is to find a rhythm. Keep training everyone!"</p>
+                        <div class="community-post-footer">2 hours ago</div>
+                    </div>
+                    <div class="community-post">
+                        <h4><i class="fas fa-lightbulb"></i> Mindfulness Tip from Jane</h4>
+                        <p>"I found the 4-7-8 breathing exercise really helps before a stressful meeting. Highly recommend!"</p>
+                        <div class="community-post-footer">5 hours ago</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings" class="tab-content">
+            <div class="card">
+                <div class="card-header"><i class="fas fa-cog"></i> <h2>Settings</h2></div>
+                <div class="card-body">
+                     <h3><i class="fas fa-volume-up"></i> Audio</h3>
+                     <div class="toggle-switch-container">
+                         <label class="toggle-switch">
+                             <input type="checkbox" id="sfx-toggle" checked>
+                             <span class="slider"></span>
+                         </label>
+                         <span>Sound Effects</span>
+                     </div>
+                     <hr style="border-color: var(--border); margin: 1.5rem 0;">
+                     <h3><i class="fas fa-palette"></i> Theme</h3>
+                     <p>Theme customization options coming soon!</p>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 NeuroMind Elite. All Rights Reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- General Setup ---
+            const tabs = document.querySelectorAll('.tab-btn');
+            const contents = document.querySelectorAll('.tab-content');
+            
+            // --- Audio Setup ---
+            const sfxToggle = document.getElementById('sfx-toggle');
+            const clickSound = document.getElementById('click-sound');
+            const matchSound = document.getElementById('match-sound');
+            const winSound = document.getElementById('win-sound');
+            
+            function playSound(sound) {
+                if (sfxToggle.checked) {
+                    sound.currentTime = 0;
+                    sound.play();
+                }
+            }
+
+            // --- Tab Navigation ---
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    playSound(clickSound);
+                    
+                    tabs.forEach(item => item.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    const targetId = tab.dataset.tab;
+                    contents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === targetId) {
+                            content.classList.add('active');
+                        }
+                    });
+                });
+            });
+
+            // --- Memory Game Logic ---
+            const gameBoard = document.getElementById('game-board');
+            const startGameBtn = document.getElementById('start-game-btn');
+            const scoreEl = document.getElementById('game-score');
+            const timeEl = document.getElementById('game-time');
+            const movesEl = document.getElementById('game-moves');
+            
+            const ICONS = ['atom', 'brain', 'flask', 'dna', 'microscope', 'satellite', 'rocket', 'robot'];
+            let flippedCards = [];
+            let matchedPairs = 0;
+            let moves = 0;
+            let score = 0;
+            let gameTimer = null;
+            let timeLeft = 60;
+
+            function createGameBoard() {
+                gameBoard.innerHTML = '';
+                const gameIcons = [...ICONS, ...ICONS].sort(() => 0.5 - Math.random());
+                
+                for (const icon of gameIcons) {
+                    const card = document.createElement('div');
+                    card.classList.add('game-card');
+                    card.dataset.icon = icon;
+                    card.innerHTML = `
+                        <div class="game-card-face game-card-front"></div>
+                        <div class="game-card-face game-card-back"><i class="fas fa-${icon}"></i></div>
+                    `;
+                    card.addEventListener('click', onCardClick);
+                    gameBoard.appendChild(card);
+                }
+            }
+
+            function startGame() {
+                // Reset game state
+                clearInterval(gameTimer);
+                flippedCards = [];
+                matchedPairs = 0;
+                moves = 0;
+                score = 0;
+                timeLeft = 60;
+
+                // Update UI
+                movesEl.textContent = moves;
+                scoreEl.textContent = score;
+                timeEl.textContent = timeLeft;
+                startGameBtn.disabled = true;
+
+                createGameBoard();
+
+                // Start timer
+                gameTimer = setInterval(() => {
+                    timeLeft--;
+                    timeEl.textContent = timeLeft;
+                    if (timeLeft <= 0) {
+                        clearInterval(gameTimer);
+                        alert('Time is up! Game Over.');
+                        startGameBtn.disabled = false;
+                    }
+                }, 1000);
+            }
+
+            function onCardClick(e) {
+                const clickedCard = e.currentTarget;
+
+                if (flippedCards.length < 2 && !clickedCard.classList.contains('is-flipped')) {
+                    playSound(clickSound);
+                    clickedCard.classList.add('is-flipped');
+                    flippedCards.push(clickedCard);
+
+                    if (flippedCards.length === 2) {
+                        moves++;
+                        movesEl.textContent = moves;
+                        checkForMatch();
+                    }
+                }
+            }
+            
+            function checkForMatch() {
+                const [card1, card2] = flippedCards;
+                if (card1.dataset.icon === card2.dataset.icon) {
+                    // It's a match
+                    playSound(matchSound);
+                    card1.classList.add('is-matched');
+                    card2.classList.add('is-matched');
+                    card1.removeEventListener('click', onCardClick);
+                    card2.removeEventListener('click', onCardClick);
+                    matchedPairs++;
+                    score += 10;
+                    scoreEl.textContent = score;
+                    
+                    if (matchedPairs === ICONS.length) {
+                        clearInterval(gameTimer);
+                        playSound(winSound);
+                        score += timeLeft; // Time bonus
+                        scoreEl.textContent = score;
+                        alert(`You won with a score of ${score}!`);
+                        startGameBtn.disabled = false;
+                    }
+                    flippedCards = [];
+                } else {
+                    // Not a match
+                    setTimeout(() => {
+                        card1.classList.remove('is-flipped');
+                        card2.classList.remove('is-flipped');
+                        flippedCards = [];
+                    }, 1000);
+                }
+            }
+            
+            startGameBtn.addEventListener('click', startGame);
+            createGameBoard(); // Initial empty board
+
+            // --- Breathing Exercise ---
+            const startBreathingBtn = document.getElementById('start-breathing-btn');
+            const breathingCircle = document.getElementById('breathing-circle');
+            const breathingText = document.getElementById('breathing-text');
+            
+            startBreathingBtn.addEventListener('click', () => {
+                startBreathingBtn.disabled = true;
+                
+                function runCycle() {
+                    breathingText.textContent = "Breathe In";
+                    breathingCircle.style.transform = 'scale(1.5)';
+                    
+                    setTimeout(() => {
+                        breathingText.textContent = "Hold";
+                        setTimeout(() => {
+                            breathingText.textContent = "Breathe Out";
+                            breathingCircle.style.transform = 'scale(1)';
+                            setTimeout(() => {
+                                breathingText.textContent = "Ready?";
+                                startBreathingBtn.disabled = false;
+                            }, 8000); // Exhale duration
+                        }, 7000); // Hold duration
+                    }, 4000); // Inhale duration
+                }
+                runCycle();
+            });
+            
+            // --- Chart.js Initializations ---
+            const chartConfig = {
+                defaults: {
+                    global: {
+                        defaultFontColor: 'white'
+                    }
+                }
+            };
+            Chart.defaults.color = var(--text-muted);
+            Chart.defaults.borderColor = var(--border);
+
+            // Activity Chart (Dashboard)
+            new Chart(document.getElementById('activityChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Focus', 'Memory', 'Mindfulness'],
+                    datasets: [{
+                        label: 'Time Spent',
+                        data: [300, 50, 100],
+                        backgroundColor: [var(--primary), var(--secondary), var(--tertiary)],
+                        hoverOffset: 4
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            // Performance Chart (Dashboard)
+            new Chart(document.getElementById('performanceChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Cognitive Score',
+                        data: [65, 59, 80, 81, 56, 72, 75],
+                        backgroundColor: var(--primary-light),
+                    }]
+                },
+                 options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            // EEG Chart (Analysis)
+            new Chart(document.getElementById('eegChart'), {
+                type: 'pie',
+                data: {
+                    labels: ['Alpha', 'Beta', 'Theta', 'Delta'],
+                    datasets: [{
+                        label: 'Brainwave State',
+                        data: [45, 35, 15, 5],
+                        backgroundColor: [var(--primary), var(--secondary), var(--tertiary), var(--warning)],
+                    }]
+                },
+                 options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            // Waveform Chart (Analysis)
+            new Chart(document.getElementById('waveformChart'), {
+                type: 'line',
+                data: {
+                    labels: Array(50).fill(''),
+                    datasets: [{
+                        label: 'Alpha Wave',
+                        data: Array.from({length: 50}, () => Math.random() * 20 + 40),
+                        borderColor: var(--secondary),
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: false,
+                        tension: 0.4
+                    }]
+                },
+                options: { 
+                    responsive: true, maintainAspectRatio: false,
+                    scales: { y: { display: false }, x: { display: false } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+            
+            // Progress Chart (Progress)
+            new Chart(document.getElementById('progressChart'), {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [
+                        { label: 'Memory', data: [65, 68, 72, 71, 75, 78], borderColor: var(--primary), tension: 0.1 },
+                        { label: 'Focus', data: [58, 62, 65, 69, 70, 74], borderColor: var(--secondary), tension: 0.1 },
+                        { label: 'Problem Solving', data: [55, 56, 60, 61, 65, 68], borderColor: var(--tertiary), tension: 0.1 }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        });
+    </script>
+</body>
+</html>
