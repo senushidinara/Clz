@@ -3,40 +3,41 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>NeuroLogicX — All-in-One Prototype</title>
+<title>NeuroLogicX — All-in-One</title>
 
 <!-- Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
 <style>
-  /* Modern, polished UI */
   :root{
     --bg:#071029;
     --panel:#08233b;
     --muted:#9fb3c8;
     --accent:#22c55e;
     --accent2:#2b6cb0;
+    --card-grad: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
     --glass: rgba(255,255,255,0.03);
-    --card-gradient: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
   }
   *{box-sizing:border-box}
-  html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue';background:linear-gradient(180deg,var(--bg),#03213a);color:#e6f3ff}
-  .wrap{max-width:1200px;margin:20px auto;padding:18px}
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue';background:
+    radial-gradient(1200px 400px at 10% 10%, rgba(43,76,176,0.07), transparent),
+    linear-gradient(180deg,var(--bg),#03213a);color:#e6f3ff}
+  .wrap{max-width:1200px;margin:18px auto;padding:18px}
   header{display:flex;align-items:center;justify-content:space-between;gap:12px}
   .brand{font-weight:800;font-size:20px;color:var(--accent)}
   .sub{color:var(--muted);font-size:13px}
   .top-actions{display:flex;gap:8px;align-items:center}
-  button{background:linear-gradient(90deg,var(--accent2),#16a34a);border:none;padding:8px 12px;border-radius:10px;color:#001;font-weight:700;cursor:pointer}
-  button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);font-weight:600}
+  button{background:linear-gradient(90deg,var(--accent2),#16a34a);border:none;padding:8px 12px;border-radius:10px;color:#001;font-weight:700;cursor:pointer;box-shadow:0 6px 18px rgba(11,22,39,0.4)}
+  button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);font-weight:600;box-shadow:none}
   .grid{display:grid;grid-template-columns:1fr 380px;gap:18px;margin-top:14px}
-  .card{background:var(--card-gradient);border-radius:12px;padding:12px;border:1px solid rgba(255,255,255,0.04)}
+  .card{background:var(--card-grad);border-radius:14px;padding:14px;border:1px solid rgba(255,255,255,0.04);backdrop-filter: blur(6px)}
   .row{display:flex;gap:8px;align-items:center}
   .small{font-size:13px;color:var(--muted)}
   .muted{color:var(--muted)}
   .pill{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.02);font-weight:700}
   .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
   .tab{padding:8px 12px;border-radius:999px;background:rgba(255,255,255,0.02);cursor:pointer;border:1px solid rgba(255,255,255,0.02)}
-  .tab.active{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#011}
+  .tab.active{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#001}
   .panel{display:none;margin-top:12px}
   .panel.active{display:block}
   .stimulus{height:120px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:linear-gradient(180deg,#eef6ff,#e6fbff);color:#023;font-size:48px;transition:transform .12s}
@@ -44,31 +45,32 @@
   .metric{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed rgba(255,255,255,0.02)}
   .log{height:140px;overflow:auto;background:rgba(0,0,0,0.16);padding:8px;border-radius:8px;color:#dff3e6;font-family:monospace;font-size:12px}
   .tiny{font-size:12px;color:var(--muted)}
-  .actions-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:6px;margin-top:8px}
-  .micro-btn{padding:6px;border-radius:8px;background:rgba(255,255,255,0.02);color:var(--muted);border:1px solid rgba(255,255,255,0.02);cursor:pointer;font-weight:600}
   .canvas-wrap{border-radius:8px;overflow:hidden}
   .code{background:#022636;padding:10px;border-radius:8px;color:#bff0c7;font-family:monospace;font-size:12px}
   .cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(60px,1fr));gap:8px}
-  .card-face{height:72px;border-radius:8px;background:linear-gradient(180deg,#fff,#f6fbff);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;border:2px solid rgba(0,0,0,0.04)}
+  .card-face{height:72px;border-radius:8px;background:linear-gradient(180deg,#fff,#f6fbff);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;border:2px solid rgba(0,0,0,0.04);user-select:none}
   .drag-area{display:flex;gap:8px;align-items:center}
   .shape{width:80px;height:80px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#022;font-weight:800;cursor:grab}
   .target{width:100px;height:100px;border-radius:10px;border:2px dashed rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;min-width:100px}
+  .video-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .video-card{border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,0.04);background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01))}
+  .video-card iframe{width:100%;height:220px;border:0;display:block}
   .footer{margin-top:18px;text-align:center;color:var(--muted);font-size:13px}
-  @media (max-width:1000px){ .grid{grid-template-columns:1fr} .right{order:2} }
+  @media (max-width:1000px){ .grid{grid-template-columns:1fr} .right{order:2} .video-grid{grid-template-columns:1fr} }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <div>
-      <div class="brand">NeuroLogicX — Advanced Prototype</div>
-      <div class="sub">All outputs are derived from your on-screen interactions. No hardware required. No fabricated reports.</div>
+      <div class="brand">NeuroLogicX — All-in-One</div>
+      <div class="sub">All outputs are derived from your on-screen interactions. No fabricated reports. Embedded videos provided.</div>
     </div>
 
     <div class="top-actions">
       <div class="tiny">Profile:</div>
       <input id="profileName" placeholder="Your name" style="padding:6px;border-radius:8px;border:none" />
-      <button id="btnCreateProfile">Create / Select</button>
+      <button id="btnCreateProfile" class="ghost">Create / Select</button>
       <button id="btnExport" class="ghost">Export JSON</button>
       <button id="btnCSV" class="ghost">Export CSV</button>
     </div>
@@ -78,18 +80,18 @@
     <div class="tab active" data-tab="train">Train</div>
     <div class="tab" data-tab="memory">Memory</div>
     <div class="tab" data-tab="spatial">Visual-Spatial</div>
+    <div class="tab" data-tab="meds">Meditation & Yoga</div>
     <div class="tab" data-tab="eeg">EEG</div>
     <div class="tab" data-tab="charts">Charts</div>
     <div class="tab" data-tab="settings">Settings</div>
-    <div class="tab" data-tab="actions">100 Actions</div>
   </div>
 
   <div class="grid" style="margin-top:12px">
-    <!-- main column -->
+    <!-- left column -->
     <div>
-      <!-- TRAIN panel: quick reaction game used for metrics -->
+      <!-- TRAIN -->
       <div id="panel-train" class="panel active card">
-        <h3>Quick Reaction Session (drives metrics & bands)</h3>
+        <h3>Quick Reaction Session</h3>
         <div class="row">
           <div style="flex:1">
             <div id="stim" class="stimulus">—</div>
@@ -98,6 +100,7 @@
               <button id="stopSession" class="ghost">Stop</button>
               <div class="tiny pill" id="sessionStatus">Idle</div>
             </div>
+            <div style="margin-top:10px" class="tiny muted">Click anywhere on the page when the stimulus appears.</div>
           </div>
 
           <div style="width:280px;margin-left:12px">
@@ -125,9 +128,9 @@
         </div>
       </div>
 
-      <!-- Memory panel -->
+      <!-- MEMORY -->
       <div id="panel-memory" class="panel card" style="display:none">
-        <h3>Memory Match (Pairs) & Sequence Recall</h3>
+        <h3>Memory Match & Sequence Recall</h3>
         <div style="display:flex;gap:12px;align-items:flex-start">
           <div style="flex:1">
             <div class="card">
@@ -169,13 +172,13 @@
         </div>
       </div>
 
-      <!-- Visual-Spatial panel -->
+      <!-- SPATIAL -->
       <div id="panel-spatial" class="panel card" style="display:none">
-        <h3>Visual-Spatial Puzzle — Drag & Drop Shapes</h3>
+        <h3>Visual-Spatial Puzzle — Drag & Drop</h3>
         <div class="row" style="gap:12px;align-items:flex-start">
           <div style="flex:1">
             <div class="card">
-              <div class="tiny muted">Drag shapes into the matching target by color/shape.</div>
+              <div class="tiny muted">Drag shapes into matching targets.</div>
               <div style="margin-top:12px" class="drag-area">
                 <div id="shapes" style="display:flex;gap:10px;flex-wrap:wrap"></div>
                 <div style="flex:1;display:flex;flex-direction:column;gap:8px">
@@ -204,7 +207,83 @@
         </div>
       </div>
 
-      <!-- EEG panel -->
+      <!-- MEDITATION & YOGA -->
+      <div id="panel-meds" class="panel card" style="display:none">
+        <h3>Meditation & Yoga — Watch and Follow</h3>
+        <div class="tiny muted">These are embedded YouTube videos you asked to be included. Click "Open" to play in-residence or "Open in new tab".</div>
+        <div style="margin-top:12px" class="video-grid">
+          <!-- Yoga -->
+          <div class="video-card card">
+            <div style="padding:10px">
+              <strong>Yoga Session</strong>
+              <div class="tiny muted">Guided Yoga</div>
+              <div style="margin-top:8px">
+                <iframe id="yogaFrame" src="https://www.youtube.com/embed/yPK7ISPEu3M?rel=0&modestbranding=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <div style="margin-top:8px" class="row">
+                  <button onclick="openVideo('https://www.youtube.com/watch?v=yPK7ISPEu3M')">Open</button>
+                  <button onclick="openVideoNew('https://www.youtube.com/watch?v=yPK7ISPEu3M')" class="ghost">Open in new tab</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Breathing -->
+          <div class="video-card card">
+            <div style="padding:10px">
+              <strong>Breathing Exercise</strong>
+              <div class="tiny muted">Guided breathing</div>
+              <div style="margin-top:8px">
+                <iframe id="breathFrame" src="https://www.youtube.com/embed/395ZloN4Rr8?rel=0&modestbranding=1" allowfullscreen></iframe>
+                <div style="margin-top:8px" class="row">
+                  <button onclick="openVideo('https://www.youtube.com/watch?v=395ZloN4Rr8')">Open</button>
+                  <button onclick="openVideoNew('https://www.youtube.com/watch?v=395ZloN4Rr8')" class="ghost">Open in new tab</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mindfulness -->
+          <div class="video-card card">
+            <div style="padding:10px">
+              <strong>Mindfulness Exercise</strong>
+              <div class="tiny muted">Short guided mindfulness</div>
+              <div style="margin-top:8px">
+                <iframe id="mindfulFrame" src="https://www.youtube.com/embed/LiUnFJ8P4gM?rel=0&modestbranding=1" allowfullscreen></iframe>
+                <div style="margin-top:8px" class="row">
+                  <button onclick="openVideo('https://www.youtube.com/watch?v=LiUnFJ8P4gM')">Open</button>
+                  <button onclick="openVideoNew('https://www.youtube.com/watch?v=LiUnFJ8P4gM')" class="ghost">Open in new tab</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Meditation -->
+          <div class="video-card card">
+            <div style="padding:10px">
+              <strong>Meditation</strong>
+              <div class="tiny muted">Full guided meditation</div>
+              <div style="margin-top:8px">
+                <iframe id="medFrame" src="https://www.youtube.com/embed/j734gLbQFbU?rel=0&modestbranding=1" allowfullscreen></iframe>
+                <div style="margin-top:8px" class="row">
+                  <button onclick="openVideo('https://www.youtube.com/watch?v=j734gLbQFbU')">Open</button>
+                  <button onclick="openVideoNew('https://www.youtube.com/watch?v=j734gLbQFbU')" class="ghost">Open in new tab</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:12px" class="card">
+          <strong>Timer</strong>
+          <div class="row" style="margin-top:8px">
+            <button onclick="setTimer(60)" class="ghost">1 min</button>
+            <button onclick="setTimer(180)" class="ghost">3 min</button>
+            <button onclick="setTimer(300)" class="ghost">5 min</button>
+            <div id="timerDisplay" class="tiny muted" style="margin-left:12px">No timer</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EEG -->
       <div id="panel-eeg" class="panel card" style="display:none">
         <h3>Behavior-Derived EEG Band Estimates & Waveform</h3>
         <div class="row">
@@ -240,7 +319,7 @@ Bands derived deterministically from meanRT, accuracy, RT variance.
         </div>
       </div>
 
-      <!-- Charts -->
+      <!-- CHARTS -->
       <div id="panel-charts" class="panel card" style="display:none">
         <h3>Charts: Session Trends & Band Timeline</h3>
         <div style="display:flex;gap:12px;flex-wrap:wrap">
@@ -253,7 +332,7 @@ Bands derived deterministically from meanRT, accuracy, RT variance.
         </div>
       </div>
 
-      <!-- Settings -->
+      <!-- SETTINGS -->
       <div id="panel-settings" class="panel card" style="display:none">
         <h3>Settings</h3>
         <div class="row" style="gap:12px;align-items:center">
@@ -276,13 +355,6 @@ Bands derived deterministically from meanRT, accuracy, RT variance.
         </div>
       </div>
 
-      <!-- 100 Actions panel -->
-      <div id="panel-actions" class="panel card" style="display:none">
-        <h3>Interactive Actions — 100 buttons (all functional)</h3>
-        <div class="tiny muted">Each Action triggers a real effect (tone, tip, toggle, open media, or add a user-initiated session). None are placeholders.</div>
-        <div id="actionsGrid" class="actions-grid"></div>
-      </div>
-
     </div>
 
     <!-- right column -->
@@ -296,7 +368,7 @@ Bands derived deterministically from meanRT, accuracy, RT variance.
       </div>
 
       <div class="card" style="margin-top:12px">
-        <h4 class="small muted">Actions / Quick</h4>
+        <h4 class="small muted">Quick</h4>
         <div class="row" style="margin-top:8px"><button id="btnPlayBell">Bell</button><button id="btnPlayBreath">Breath audio</button></div>
         <div style="margin-top:8px"><button id="btnShowReport" class="ghost">Generate Report (truthful)</button></div>
       </div>
@@ -314,37 +386,33 @@ Bands derived deterministically from meanRT, accuracy, RT variance.
   </div>
 
   <div class="footer">
-    <div class="tiny muted">Everything stored locally. The EEG waveform and bands are behavior-derived estimates (not biosignals). Formulas are visible in Settings & EEG panel.</div>
+    <div class="tiny muted">Everything stored locally. The EEG waveform and bands are behavior-derived estimates (not biosignals). Formulas are visible in the EEG panel.</div>
   </div>
 </div>
 
-<!-- Sound & media sources (CC0 / Pixabay) -->
+<!-- sounds -->
 <audio id="bellAudio" src="https://cdn.pixabay.com/audio/2022/02/15/audio_3a7b8d2f6f.mp3"></audio>
 <audio id="breathAudio" src="https://cdn.pixabay.com/audio/2022/03/01/audio_1f6cb7a8d7.mp3"></audio>
-<video id="medVideo" style="display:none" src="https://cdn.pixabay.com/video/2022/09/05/13/07/ocean-7498544_1280.mp4"></video>
 
 <script>
-/* ===============================
+/* -------------------------------
    Utilities & Persistence
-   =============================== */
+   ------------------------------- */
 const S_KEY = 'neuro_sessions_v4'
 const P_KEY = 'neuro_profile_v1'
-
-function nowPerf(){ return performance.now() } // ms high-res
+function nowPerf(){ return performance.now() }
 function tNow(){ return Date.now() }
 function uid(prefix='id'){ return prefix + '_' + Math.random().toString(36).slice(2,10) }
-
 function loadSessions(){ try{ return JSON.parse(localStorage.getItem(S_KEY) || '[]') }catch(e){return[]} }
 function saveSession(session){ const a = loadSessions(); a.unshift(session); localStorage.setItem(S_KEY, JSON.stringify(a.slice(0,1000))); refreshUI(); return session }
 function clearSessions(){ localStorage.removeItem(S_KEY); refreshUI() }
-
 function loadProfile(){ try{ return JSON.parse(localStorage.getItem(P_KEY) || 'null') }catch(e){return null} }
 function saveProfile(p){ localStorage.setItem(P_KEY, JSON.stringify(p)); refreshProfileUI() }
 function createProfile(name='You'){ const p={ id: uid('u'), name, level:1, xp:0, xpToNext:100, streak:0, created:tNow() }; saveProfile(p); return p }
 
-/* ===============================
-   Sound: WebAudio helper
-   =============================== */
+/* -------------------------------
+   Sound / Audio
+   ------------------------------- */
 let audioCtx=null
 function ensureAudio(){ if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)() }
 function playClick(freq=660, vol=0.03){
@@ -358,10 +426,9 @@ function playClick(freq=660, vol=0.03){
 }
 function playChime(){ ensureAudio(); const now=audioCtx.currentTime; [880,1320,1760].forEach((f,i)=>{ const o=audioCtx.createOscillator(), g=audioCtx.createGain(); o.type='sine'; o.frequency.value=f; g.gain.value=0.02; o.connect(g); g.connect(audioCtx.destination); o.start(now + i*0.06); g.gain.exponentialRampToValueAtTime(0.0001, now + i*0.06 + 0.36); o.stop(now + i*0.06 + 0.38); }) }
 
-/* ===============================
-   Metrics & Behavior -> Bands
-   Deterministic and transparent.
-   =============================== */
+/* -------------------------------
+   Behavior -> Bands (transparent formulas)
+   ------------------------------- */
 function computeSessionMetrics(session){
   const trials = session.trials || []
   const rts = trials.filter(t=>t.rt!=null).map(t=>t.rt)
@@ -371,39 +438,30 @@ function computeSessionMetrics(session){
   return { avgRT, acc, rtStd, trialsCount: trials.length }
 }
 
-/* behaviorToBands: returns deterministic band estimates and shows formula in UI
-   Inputs: metrics {meanRT, accuracy, rtStd, impulsiveErrors, totalErrors}
-   Baseline RT is configurable (default 600ms)
-*/
 function behaviorToBands(metrics, options={scale:5, rFactor:1.6, baselineRT:600}){
   const meanRT = metrics.meanRT || metrics.avgRT || 900
   const accuracy = (typeof metrics.accuracy === 'number') ? metrics.accuracy : (metrics.acc || 0.75)
   const rtStd = metrics.rtStd || 0.0
   const impulsive = metrics.impulsiveErrors || 0
   const totalErr = metrics.totalErrors || 1
-
   const baseRT = options.baselineRT || 600
-  const speedFactor = Math.max(0.01, (baseRT - meanRT) / baseRT) // positive if faster
+  const speedFactor = Math.max(0.01, (baseRT - meanRT) / baseRT)
   const fatigueFactor = Math.max(0, (meanRT - baseRT) / baseRT)
   const varFactor = Math.min(1, rtStd / 300)
   const stressFactor = Math.min(1, impulsive / Math.max(1, totalErr))
-
   let beta = Math.max(0, speedFactor * (0.5 + 0.8*accuracy) - 0.3*varFactor + 0.2*(1-stressFactor))
   let gamma = Math.max(0, speedFactor * (0.2 + 0.6*accuracy) - 0.2*varFactor)
   let alpha = Math.max(0, 0.5*(1 - speedFactor) * (0.6 + 0.4*accuracy) - 0.1*stressFactor)
   let theta = Math.max(0, fatigueFactor * (0.4 + 0.6*varFactor) + 0.2*stressFactor)
   let delta = Math.max(0, fatigueFactor * (0.2 + 0.4*varFactor))
-
   const rf = options.rFactor || 1.6
   beta = Math.pow(beta + 1e-6, rf)
   gamma = Math.pow(gamma + 1e-6, rf)
   alpha = Math.pow(alpha + 1e-6, rf)
   theta = Math.pow(theta + 1e-6, rf)
   delta = Math.pow(delta + 1e-6, rf)
-
   const norm = delta + theta + alpha + beta + gamma
   const scale = (options.scale || 5) / Math.max(4.0, norm)
-
   return {
     delta: +(delta * scale).toFixed(4),
     theta: +(theta * scale).toFixed(4),
@@ -413,13 +471,12 @@ function behaviorToBands(metrics, options={scale:5, rFactor:1.6, baselineRT:600}
   }
 }
 
-/* ===============================
-   EEG Canvas Wave (synth from bands)
-   =============================== */
+/* -------------------------------
+   EEG Canvas + Charts
+   ------------------------------- */
 const eegCanvas = document.getElementById('eegCanvas')
 const eegCtx = eegCanvas.getContext('2d')
 let lastBands = {delta:0.2,theta:0.4,alpha:1,beta:1.2,gamma:0.6}
-let eegRaf = null
 function setBands(b){ lastBands = b; updateBandUI(b) }
 function updateBandUI(b){
   document.getElementById('bDelta').innerText = b.delta
@@ -451,13 +508,10 @@ function drawEEG(){
     else eegCtx.lineTo(x,y)
   }
   eegCtx.stroke()
-  eegRaf = requestAnimationFrame(drawEEG)
+  requestAnimationFrame(drawEEG)
 }
 drawEEG()
 
-/* ===============================
-   Charts (Chart.js)
-   =============================== */
 const perfCtx = document.getElementById('perfChart').getContext('2d')
 const bandCtx = document.getElementById('bandChart').getContext('2d')
 const perfChart = new Chart(perfCtx, {
@@ -478,7 +532,7 @@ const bandChart = new Chart(bandCtx, {
     {label:'Gamma',data:[],borderColor:'#ef4444',tension:0.3}
   ]},
   options:{plugins:{legend:{display:true}}}
-)
+})
 function pushToCharts(session){
   const m = computeSessionMetrics(session)
   const label = new Date(session.created_at).toLocaleTimeString()
@@ -487,7 +541,6 @@ function pushToCharts(session){
   perfChart.data.datasets[1].data.push(m.avgRT?Math.round(m.avgRT):0)
   if(perfChart.data.labels.length>40){ perfChart.data.labels.shift(); perfChart.data.datasets.forEach(d=>d.data.shift()) }
   perfChart.update()
-
   const bands = behaviorToBands({ meanRT: m.avgRT, accuracy: m.acc, rtStd: m.rtStd }, { baselineRT: parseInt(document.getElementById('baselineRT').value||600,10) })
   bandChart.data.labels.push(label)
   const keys=['delta','theta','alpha','beta','gamma']
@@ -497,9 +550,9 @@ function pushToCharts(session){
   setBands(bands)
 }
 
-/* ===============================
-   Session runner: Reaction (drives metrics)
-   =============================== */
+/* -------------------------------
+   Reaction Session (works)
+   ------------------------------- */
 let running=false, currentTrials=[]
 document.getElementById('startSession').addEventListener('click', ()=> startSession(12))
 document.getElementById('stopSession').addEventListener('click', ()=> stopSession(true))
@@ -508,7 +561,6 @@ document.getElementById('btnPlayBreath').addEventListener('click', ()=> document
 document.getElementById('btnShowReport').addEventListener('click', ()=> generateReport())
 
 function log(msg){ const el=document.getElementById('log'); el.innerText = new Date().toLocaleTimeString() + ' • ' + msg + '\n' + el.innerText }
-
 async function startSession(trialsCount=12){
   if(running) return
   ensureAudio()
@@ -516,12 +568,10 @@ async function startSession(trialsCount=12){
   log('Session started: ' + trialsCount + ' trials')
   const stimEl = document.getElementById('stim')
   for(let i=0;i<trialsCount && running;i++){
-    // present stimulus
     const stim = Math.random() < 0.5 ? '🔴' : '🔵'
     stimEl.innerText = stim; stimEl.style.transform='scale(1.04)'
     const t0 = nowPerf()
     let responded=false
-    // wait up to 1800ms for click anywhere
     function clickHandler(){ responded=true; const rt = Math.round(nowPerf() - t0); currentTrials.push({rt,stim,correct:true,t_perf:nowPerf(),t_epoch:tNow()}); window.removeEventListener('click', clickHandler); playClick(880,0.02); log('Response: ' + rt + 'ms') }
     window.addEventListener('click', clickHandler)
     await sleep(1800)
@@ -541,7 +591,6 @@ function stopSession(userStopped=false){
   const m = computeSessionMetrics(session)
   document.getElementById('lastAvgRT').innerText = m.avgRT?Math.round(m.avgRT):'—'
   document.getElementById('lastAcc').innerText = m.acc?Math.round(m.acc*100)+'%':'—'
-  // engagement index (transparent): (baselineRT / meanRT) × accuracy
   const baseline = parseInt(document.getElementById('baselineRT').value||600,10)
   const engagement = m.avgRT ? ((baseline / m.avgRT) * (m.acc||0)).toFixed(3) : '—'
   document.getElementById('lastEng').innerText = engagement
@@ -550,13 +599,12 @@ function stopSession(userStopped=false){
   pushToCharts(session)
 }
 
-/* ===============================
-   Memory Match Implementation
-   =============================== */
+/* -------------------------------
+   Memory match & sequence
+   ------------------------------- */
 let memState={board:[],open:[],matches:0,moves:0,startedAt:0}
 document.getElementById('memStart').addEventListener('click', ()=> startMemory(8))
 document.getElementById('memShuffle').addEventListener('click', ()=> shuffleMemory())
-
 function startMemory(pairs=8){
   const icons = ['🍎','🍊','🍇','🍉','🍓','🍒','🍍','🥝','🍋','🍑','🥑','🍌','🥥','🍐','🍈','🥭']
   const pool = icons.slice(0,pairs)
@@ -566,7 +614,6 @@ function startMemory(pairs=8){
   renderMemoryBoard()
   log('Memory board started: ' + pairs + ' pairs')
 }
-
 function renderMemoryBoard(){
   const board = document.getElementById('memBoard'); board.innerHTML=''
   memState.board.forEach((card, idx)=>{
@@ -579,7 +626,6 @@ function renderMemoryBoard(){
   document.getElementById('memMoves').innerText = memState.moves
   document.getElementById('memMatches').innerText = memState.matches
 }
-
 function onMemClick(idx){
   const card = memState.board[idx]
   if(card.matched || memState.open.includes(idx) || memState.open.length>=2) return
@@ -599,7 +645,6 @@ function onMemClick(idx){
     renderMemoryBoard()
   }
 }
-
 function shuffleMemory(){ if(!memState.board.length) return; memState.board = shuffle(memState.board); memState.open=[]; memState.moves=0; memState.matches=0; renderMemoryBoard(); log('Shuffled memory') }
 
 /* Sequence recall */
@@ -611,8 +656,8 @@ function startSequence(len=5){
   for(let i=0;i<len;i++) seqState.sequence.push(pool[Math.floor(Math.random()*pool.length)])
   const disp = document.getElementById('seqDisplay'); disp.innerHTML = ''
   seqState.sequence.forEach(s => { const el=document.createElement('div'); el.className='card-face'; el.style.background='#eef6ff'; el.style.color='#022'; el.innerText = s; disp.appendChild(el) })
-  setTimeout(()=>{ disp.innerHTML = ''; // now user reproduces
-    seqState.userInput = [] // simple UX: click elements in a prompt shown as options
+  setTimeout(()=>{ disp.innerHTML = '';
+    seqState.userInput = []
     const opts = document.createElement('div'); opts.className='cards-grid'
     const poolSet = Array.from(new Set([...seqState.sequence, ...Array.from({length:6},()=>String.fromCharCode(65+Math.floor(Math.random()*10)))]))
     poolSet.forEach(ch => { const but=document.createElement('div'); but.className='card-face'; but.innerText=ch; but.onclick=()=> { seqState.userInput.push(ch); but.style.opacity=0.5 }; opts.appendChild(but) })
@@ -624,16 +669,15 @@ document.getElementById('seqSubmit').addEventListener('click', ()=> {
   if(ok) { playChime(); log('Sequence correct') } else { playClick(320,0.02); log('Sequence wrong') }
 })
 
-/* ===============================
-   Visual-Spatial Drag & Drop
-   =============================== */
+/* -------------------------------
+   Visual-Spatial
+   ------------------------------- */
 document.getElementById('spatialStart').addEventListener('click', ()=> initSpatial())
 let spatialState={targets:[],shapes:[],placed:0}
 function initSpatial(){
-  spatialState.targets=[]; spatialState.shapes=[]
+  spatialState.targets=[]; spatialState.shapes=[]; spatialState.placed=0
   const colors=['#FFB703','#FB8500','#219EBC','#8ECAE6','#023047','#FF006E']
   const shapes=['▢','▲','●','◆','★','⬟']
-  // pick 3 targets
   for(let i=0;i<3;i++){
     spatialState.targets.push({id:uid('t'), color:colors[i], shape:shapes[i], filled:false})
     spatialState.shapes.push({id:uid('s'), color:colors[i], shape:shapes[i], placed:false})
@@ -657,9 +701,7 @@ function renderSpatial(){
       const sid = e.dataTransfer.getData('text/plain')
       const shapeObj = spatialState.shapes.find(x=>x.id===sid)
       if(!shapeObj) return
-      // match by shape char
       if(shapeObj.shape === t.shape){
-        // success
         document.getElementById(sid).remove()
         tr.style.background = shapeObj.color; tr.innerText = '✓'; shapeObj.placed=true; t.filled=true; spatialState.placed++
         playChime(); log('Placed correctly: ' + shapeObj.shape)
@@ -679,137 +721,75 @@ function updateSpatialMetrics(){
   document.getElementById('spatialAcc').innerText = acc + '%'
 }
 
-/* ===============================
-   Utility functions
-   =============================== */
-function sleep(ms){ return new Promise(r=>setTimeout(r, ms)) }
-function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]] } return a }
-
-/* ===============================
-   Actions Grid: 100 Buttons (all functional)
-   Each button plays a role: play tone, show tip, toggle theme, export, import, add user demo session, etc.
-   =============================== */
-const actionsGrid = document.getElementById('actionsGrid')
-const actionFunctions = []
-for(let i=1;i<=100;i++){
-  const btn = document.createElement('button'); btn.className='micro-btn'; btn.innerText = 'Action ' + i
-  // assign a behavior
-  const fn = makeActionFunction(i)
-  btn.onclick = ()=> fn()
-  actionsGrid.appendChild(btn)
-}
-
-function makeActionFunction(n){
-  // create variety deterministically
-  if(n % 10 === 0) return ()=>{ document.getElementById('medVideo').play(); log('Action '+n+': Played meditation video (CC0)') }
-  if(n % 9 === 0) return ()=>{ playChime(); log('Action '+n+': Play chime') }
-  if(n % 7 === 0) return ()=>{ playClick(440 + n, 0.02); log('Action '+n+': Play click tone') }
-  if(n % 6 === 0) return ()=>{ startSequence(4); log('Action '+n+': Started 4-item sequence') }
-  if(n % 5 === 0) return ()=>{ startMemory(4); log('Action '+n+': Started small memory game') }
-  if(n % 4 === 0) return ()=>{ initSpatial(); log('Action '+n+': Init spatial puzzle') }
-  if(n % 3 === 0) return ()=>{ // toggle theme
-    const t = document.getElementById('themeSelect'), val = t.value
-    const vals = ['calm','forest','sunset','dark']
-    const next = vals[(vals.indexOf(val)+1)%vals.length]; t.value = next; applyTheme(next); log('Action '+n+': Theme -> ' + next)
-  }
-  if(n % 2 === 0) return ()=>{ // Add a user-initiated "demo" session (explicit, not hidden fake)
-    const demo = createDemoSession()
-    saveSession(demo); log('Action '+n+': Added demo session (user-initiated): ' + demo.id)
-  }
-  // else: show a tip
-  return ()=>{ log('Action '+n+': Tip — Take a 30s breath'); document.getElementById('breathAudio').play() }
-}
-
-function createDemoSession(){
-  // ONLY create demo when user clicks — explicit and visible in log; still real events (simulated by user request)
-  const trials = []
-  for(let i=0;i<12;i++){
-    const rt = 250 + Math.round(Math.random()*500)
-    const correct = Math.random()>0.12
-    trials.push({rt,choice:correct?'tap':'miss',stim:Math.random()<0.5?'🔴':'🔵',correct,t_perf:nowPerf(),t_epoch:tNow()})
-  }
-  return { id: uid('demo'), type:'reaction-demo', trials, created_at: tNow() }
-}
-
-/* ===============================
-   Export & Import
-   =============================== */
+/* -------------------------------
+   Export / Import / Profile / XP
+   ------------------------------- */
 document.getElementById('btnExport').addEventListener('click', ()=>{
   const data = loadSessions(); const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'})
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'neuro_sessions.json'; a.click()
 })
 document.getElementById('btnCSV').addEventListener('click', ()=>{
-  const arr = loadSessions()
-  let rows=[['session_id','type','created_at','idx','rt','correct','stim']]
-  arr.forEach(s=>{
-    (s.trials||[]).forEach((t,i)=> rows.push([s.id,s.type,new Date(s.created_at).toISOString(),i,(t.rt||''),(t.correct||''),(t.stim||'')]))
-  })
-  const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n')
-  const blob=new Blob([csv],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='neuro_sessions.csv'; a.click()
+  const arr = loadSessions(); let rows=[['session_id','type','created_at','idx','rt','correct','stim']]
+  arr.forEach(s=> (s.trials||[]).forEach((t,i)=> rows.push([s.id,s.type,new Date(s.created_at).toISOString(),i,(t.rt||''),(t.correct||''),(t.stim||'')])))
+  const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n'); const blob=new Blob([csv],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='neuro_sessions.csv'; a.click()
 })
 document.getElementById('btnImport').addEventListener('click', ()=> {
   const inp = document.createElement('input'); inp.type='file'; inp.accept='.json'
-  inp.onchange = e=> {
-    const f = e.target.files[0]; if(!f) return
-    const r = new FileReader(); r.onload = ev => {
-      try{
-        const parsed = JSON.parse(ev.target.result)
-        if(Array.isArray(parsed)) { parsed.forEach(s=> saveSession(s)); alert('Imported ' + parsed.length + ' sessions') }
-        else alert('JSON must be an array of sessions')
-      }catch(err){ alert('Import failed: ' + err.message) }
-    }; r.readAsText(f)
-  }
-  inp.click()
+  inp.onchange = e=> { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = ev => {
+      try{ const parsed = JSON.parse(ev.target.result); if(Array.isArray(parsed)) { parsed.forEach(s=> saveSession(s)); alert('Imported ' + parsed.length + ' sessions') } else alert('JSON must be an array of sessions') }catch(err){ alert('Import failed: ' + err.message) } }; r.readAsText(f)
+  }; inp.click()
 })
 
-/* ===============================
-   Profile & Leveling
-   =============================== */
 document.getElementById('btnCreateProfile').addEventListener('click', ()=>{
   const name = document.getElementById('profileName').value.trim() || 'You'
   let p = loadProfile(); if(!p){ p = createProfile(name) } else { p.name = name; saveProfile(p) }
   alert('Profile selected: ' + p.name)
 })
-function loadProfile(){ try{ return JSON.parse(localStorage.getItem(P_KEY) || 'null') }catch(e){ return null } }
+function loadProfile(){ try{ return JSON.parse(localStorage.getItem(P_KEY) || 'null') }catch(e){ return null} }
 function saveProfile(p){ localStorage.setItem(P_KEY, JSON.stringify(p)); refreshProfileUI() }
 function createProfile(name='You'){ const p={id:uid('u'),name,level:1,xp:0,xpToNext:100,streak:0,createdAt:tNow()}; saveProfile(p); return p }
 function refreshProfileUI(){ const p = loadProfile(); if(!p){ document.getElementById('userLevel').innerText='—'; document.getElementById('userXP').innerText='—'; return } document.getElementById('userLevel').innerText=p.level; document.getElementById('userXP').innerText=p.xp + ' / ' + (p.xpToNext||100) }
+function awardXP(xp){ let p = loadProfile(); if(!p) p = createProfile(document.getElementById('profileName').value || 'You'); p.xp = (p.xp||0) + xp; while(p.xp >= (p.xpToNext||100)){ p.xp -= (p.xpToNext||100); p.level = (p.level||1) + 1; p.xpToNext = Math.round((p.xpToNext||100) * 1.4); log('Level up! New level: ' + p.level); playChime() } saveProfile(p) }
 
-function awardXP(xp){
-  let p = loadProfile(); if(!p) p = createProfile(document.getElementById('profileName').value || 'You')
-  p.xp = (p.xp||0) + xp
-  while(p.xp >= (p.xpToNext||100)){
-    p.xp -= (p.xpToNext||100); p.level = (p.level||1) + 1; p.xpToNext = Math.round((p.xpToNext||100) * 1.4)
-    log('Level up! New level: ' + p.level)
-    playChime()
-  }
-  saveProfile(p)
-}
-
-/* ===============================
-   Reports: truthful, shows raw events + formulas
-   =============================== */
+/* -------------------------------
+   Reports
+   ------------------------------- */
 function generateReport(){
   const sessions = loadSessions()
   if(!sessions.length) return alert('No sessions yet')
   const last = sessions[0]
   const metrics = computeSessionMetrics(last)
   const bands = behaviorToBands({ meanRT:metrics.avgRT, accuracy:metrics.acc, rtStd:metrics.rtStd }, { baselineRT: parseInt(document.getElementById('baselineRT').value||600,10) })
-  const report = {
-    generatedAt: new Date().toISOString(),
-    sessionId: last.id,
-    sessionType: last.type,
-    metrics,
-    bands,
-    formulaNote: 'Bands are behavior-derived estimates computed from meanRT, accuracy, and RT variance. See settings for formulas.'
-  }
+  const report = { generatedAt: new Date().toISOString(), sessionId: last.id, sessionType: last.type, metrics, bands, formulaNote: 'Bands are behavior-derived estimates computed from meanRT, accuracy, and RT variance.' }
   const win = window.open('', '_blank')
   win.document.write('<pre style="white-space:pre-wrap;">' + JSON.stringify(report, null, 2) + '</pre>')
 }
 
-/* ===============================
-   UI & Initialization
-   =============================== */
+/* -------------------------------
+   Timer for meditation
+   ------------------------------- */
+let timerHandle = null
+function setTimer(seconds){
+  if(timerHandle){ clearInterval(timerHandle); timerHandle=null; document.getElementById('timerDisplay').innerText = 'Timer cleared'; return }
+  let left = seconds
+  document.getElementById('timerDisplay').innerText = `Timer: ${left}s`
+  timerHandle = setInterval(()=>{ left--; if(left<=0){ clearInterval(timerHandle); timerHandle=null; document.getElementById('timerDisplay').innerText='Done'; playChime(); } else document.getElementById('timerDisplay').innerText = `Timer: ${left}s` }, 1000)
+}
+
+/* -------------------------------
+   Video helpers (open in new window)
+   ------------------------------- */
+function openVideo(url){
+  // open in a focused popup (same tab replacement)
+  window.location.href = url
+}
+function openVideoNew(url){
+  window.open(url, '_blank')
+}
+
+/* -------------------------------
+   UI init & helpers
+   ------------------------------- */
 function refreshUI(){
   document.getElementById('numSessions').innerText = loadSessions().length
   const rec = document.getElementById('recentList'); rec.innerHTML = ''
@@ -818,7 +798,6 @@ function refreshUI(){
 }
 refreshUI()
 
-// tabs
 document.querySelectorAll('.tab').forEach(t=>{
   t.addEventListener('click', ()=> {
     document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'))
@@ -829,14 +808,28 @@ document.querySelectorAll('.tab').forEach(t=>{
   })
 })
 
-/* ===============================
-   Helpers used by multiple parts
-   =============================== */
-function ensureAudio(){ if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)() }
+function sleep(ms){ return new Promise(r=>setTimeout(r, ms)) }
+function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]] } return a }
 
-/* initialize: populate actionsGrid already done, refresh UI */
-refreshUI()
+/* -------------------------------
+   Small UX utilities
+   ------------------------------- */
+document.getElementById('btnHints').addEventListener('click', ()=> alert('Hint: Focus on the color or shape. Short breathing before test helps.'))
+document.getElementById('btnMute').addEventListener('click', ()=> { const b=document.getElementById('bellAudio'); b.muted = !b.muted; document.getElementById('btnMute').innerText = b.muted ? 'Unmute' : 'Toggle Sound' })
+document.getElementById('btnReset').addEventListener('click', ()=> { if(confirm('Clear stored sessions and profile?')){ localStorage.removeItem(S_KEY); localStorage.removeItem(P_KEY); location.reload() } })
+document.getElementById('btnReplayLast').addEventListener('click', ()=> { const s = loadSessions()[0]; if(!s) return alert('No session'); alert('Last session: ' + s.id + '\\nTrials: ' + (s.trials?.length||0)) })
 
+// simulate bands from latest session when button clicked
+document.getElementById('simBands').addEventListener('click', ()=> {
+  const s = loadSessions()[0]; if(!s) return alert('No sessions')
+  const m = computeSessionMetrics(s)
+  const bands = behaviorToBands({ meanRT:m.avgRT, accuracy:m.acc, rtStd:m.rtStd }, { baselineRT: parseInt(document.getElementById('baselineRT').value||600,10) })
+  setBands(bands); pushToCharts(s); alert('Bands computed and charts updated (behavior-derived).')
+})
+document.getElementById('clearBands').addEventListener('click', ()=> { bandChart.data.labels = []; bandChart.data.datasets.forEach(d=>d.data=[]); bandChart.update(); alert('Band timeline cleared') })
+
+/* final: ensure audio context on first user gesture (some browsers block otherwise) */
+window.addEventListener('click', ()=> { try{ if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume() }catch(e){} }, { once: true })
 </script>
 </body>
 </html>
