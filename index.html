@@ -5,17 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0A0F1A">
     <title>NeuroMind Pro | Singularity Edition</title>
-    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Third-party libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.150.1/examples/js/loaders/GLTFLoader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.2.1/dist/chart.umd.js"></script>
-
-    <!-- ======================================================================= -->
-    <!-- [ STYLES - Singularity Edition ]                                        -->
-    <!-- ======================================================================= -->
     <style>
         :root {
             --primary: #805AD5; /* Purple */
@@ -30,7 +21,6 @@
             --text-muted: #A0AEC0;
             --bg: #0A0F1A; /* Very Dark Blue */
             --border: rgba(255, 255, 255, 0.1);
-            /* Neurofeedback colors */
             --ambiance-color: rgba(49, 130, 206, 0); /* Initial transparent */
         }
         html { font-size: 16px; scroll-behavior: smooth; }
@@ -142,7 +132,42 @@
         /* --- EEG 3D Visualizer --- */
         #eeg-3d-container { height: 500px; position: relative; border-radius: 8px; overflow: hidden; background: #000; cursor: grab; }
         #eeg-3d-container:active { cursor: grabbing; }
-
+        .eeg-visualization { height: 100%; display: flex; justify-content: center; align-items: center; }
+        .brain-activity {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+            position: relative;
+            animation: pulse 3s infinite;
+        }
+        .brain-activity::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--secondary) 0%, transparent 70%);
+            opacity: 0.7;
+            animation: pulse 3s infinite 0.5s;
+        }
+        .brain-activity::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--success) 0%, transparent 70%);
+            opacity: 0.5;
+            animation: pulse 3s infinite 1s;
+        }
+        
         /* --- Progress Tab --- */
         .progress-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; }
         .radar-chart-container, .trend-chart-container { height: 400px; }
@@ -156,6 +181,70 @@
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
+        
+        /* --- Meditation Options --- */
+        .meditation-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .meditation-option {
+            background: var(--glass);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .meditation-option:hover {
+            background: var(--primary);
+            transform: translateY(-5px);
+        }
+        .meditation-option i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        .mindfulness-tips p {
+            margin-bottom: 0.8rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        .mindfulness-tips p:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--primary-light);
+        }
+        
+        /* --- Neuro Game --- */
+        .game-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .game-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+        .color-option {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+        .red { background-color: #E53E3E; }
+        .blue { background-color: #3182CE; }
+        .green { background-color: #38A169; }
+        .yellow { background-color: #D69E2E; }
+        .purple { background-color: #805AD5; }
         
         /* --- Responsive Adjustments --- */
         @media (max-width: 768px) {
@@ -171,6 +260,9 @@
                 width: 30px;
                 height: 30px;
                 font-size: 0.8rem;
+            }
+            .page-grid, .game-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -200,21 +292,7 @@
         </div>
     </div>
 
-    <!-- ======================================================================= -->
-    <!-- [ JAVASCRIPT LOGIC - Singularity Edition ]                              -->
-    <!-- ======================================================================= -->
-    <script type="module">
-        // --- [ EMBEDDED ASSETS & CONFIGURATION ] ---
-        const ASSETS = {
-            // Embedded UI Sound Effects
-            SOUND_CLICK_B64: 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA',
-            SOUND_SUCCESS_B64: 'data:audio/wav;base64,UklGRlIAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhSAAAAEAAAAB1AAAAgwAAAJQAAACzAAAAtgAAALMAAACsAAAAqAAAAJkAAACNAAAAhwAAAGwAAABWAAAAQwAAACoAAAAgAAAAEwAAAAcAAAADAAAAAQAAAAE=',
-            // Embedded Meditation Audio
-            MEDITATION_OCEAN_B64: 'https://assets.mixkit.co/active_storage/sfx/250/250-preview.mp3',
-            MEDITATION_FOREST_B64: 'https://assets.mixkit.co/active_storage/sfx/243/243-preview.mp3',
-            MEDITATION_RAIN_B64: 'https://assets.mixkit.co/active_storage/sfx/240/240-preview.mp3'
-        };
-
+    <script>
         // --- [ UTILITY MODULE ] ---
         const Utils = {
             uid: () => Date.now().toString(36) + Math.random().toString(36).substr(2, 5),
@@ -239,37 +317,28 @@
                 this.binauralOsc2 = null;
                 this.activeSound = null;
                 this.meditationTracks = [
-                    { title: "Ocean Waves", src: ASSETS.MEDITATION_OCEAN_B64 },
-                    { title: "Forest Ambience", src: ASSETS.MEDITATION_FOREST_B64 },
-                    { title: "Gentle Rain", src: ASSETS.MEDITATION_RAIN_B64 }
+                    { title: "Ocean Waves", src: "https://assets.mixkit.co/active_storage/sfx/250/250-preview.mp3" },
+                    { title: "Forest Ambience", src: "https://assets.mixkit.co/active_storage/sfx/243/243-preview.mp3" },
+                    { title: "Gentle Rain", src: "https://assets.mixkit.co/active_storage/sfx/240/240-preview.mp3" }
                 ];
                 this.currentTrackIndex = 0;
                 this.isPlaying = false;
                 Utils.log("Audio Controller Initialized.");
             }
             
-            playSound(base64) {
-                const sound = new Audio(base64);
-                sound.play();
+            playSound() {
+                // Play a simple beep for UI feedback
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                oscillator.type = 'sine';
+                oscillator.frequency.value = 800;
+                gainNode.gain.value = 0.1;
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                oscillator.start();
+                oscillator.stop(this.audioContext.currentTime + 0.1);
             }
 
-            playBinauralBeat(baseFreq, beatFreq) {
-                if (this.binauralOsc1) {
-                    this.binauralOsc1.stop();
-                    this.binauralOsc2.stop();
-                }
-                this.binauralOsc1 = this.audioContext.createOscillator();
-                this.binauralOsc2 = this.audioContext.createOscillator();
-                this.binauralOsc1.type = 'sine';
-                this.binauralOsc2.type = 'sine';
-                this.binauralOsc1.frequency.setValueAtTime(baseFreq - (beatFreq / 2), this.audioContext.currentTime);
-                this.binauralOsc2.frequency.setValueAtTime(baseFreq + (beatFreq / 2), this.audioContext.currentTime);
-                this.binauralOsc1.connect(this.ambianceGain);
-                this.binauralOsc2.connect(this.ambianceGain);
-                this.binauralOsc1.start();
-                this.binauralOsc2.start();
-            }
-            
             playMeditationTrack(index = null) {
                 if (index !== null) this.currentTrackIndex = index;
                 if (this.activeSound) {
@@ -314,12 +383,6 @@
             }
 
             stopAllSounds() {
-                if (this.binauralOsc1) {
-                    this.binauralOsc1.stop();
-                    this.binauralOsc2.stop();
-                    this.binauralOsc1 = null;
-                    this.binauralOsc2 = null;
-                }
                 if (this.activeSound) {
                     this.activeSound.pause();
                     this.activeSound = null;
@@ -354,13 +417,18 @@
             }
             
             async init() {
-                this.ui.showLoader("Initializing EEG Worker...");
+                // Simulate initialization process
+                this.ui.showLoader("Connecting neural interface...");
+                await this.delay(1000);
+                this.ui.showLoader("Calibrating sensors...");
+                await this.delay(1000);
+                this.ui.showLoader("Optimizing cognitive profile...");
+                await this.delay(1000);
                 
                 this.ui.showLoader("Platform ready. Welcome back.");
                 this.state.system.ready = true;
                 this.update();
                 
-                this.audioController.playBinauralBeat(100, 10);
                 this.showCoachMessage(`Welcome, ${this.state.user.name}. Let's begin your cognitive journey.`, 'fa-hand-sparkles');
                 
                 // Start random coach messages
@@ -373,6 +441,10 @@
                         );
                     }
                 }, 30000);
+            }
+            
+            delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
             }
             
             loadState() {
@@ -388,7 +460,7 @@
                         cognitiveProfile: { memory: 50, attention: 65, speed: 70, problemSolving: 55, flexibility: 60 },
                         sessions: [],
                         eeg: { bands: { delta: 0.1, theta: 0.2, alpha: 0.4, beta: 0.3 } },
-                        game: { inProgress: false }
+                        game: { inProgress: false, score: 0, round: 1 }
                     };
                 }
             }
@@ -404,13 +476,15 @@
             
             handleAction(action, payload) {
                 Utils.log(`Action: ${action}`, payload || '');
-                this.audioController.playSound(ASSETS.SOUND_CLICK_B64);
+                this.audioController.playSound();
 
                 switch (action) {
                     case 'CHANGE_TAB':
                         this.state.ui.activeTab = payload;
                         if (payload === 'mindfulness') {
                             this.showCoachMessage("Mindfulness practices can enhance focus and reduce stress.", 'fa-spa');
+                        } else if (payload === 'neuro-game') {
+                            this.showCoachMessage("Focus training game activated. Match the colors quickly!", 'fa-gamepad');
                         }
                         break;
                     case 'TOGGLE_PLAYER':
@@ -426,6 +500,12 @@
                         this.audioController.playMeditationTrack(payload);
                         document.getElementById('media-player-container').style.display = 'block';
                         this.showCoachMessage("Beginning meditation session. Focus on your breath...", 'fa-spa');
+                        break;
+                    case 'START_GAME':
+                        this.startGame();
+                        break;
+                    case 'GAME_COLOR_SELECT':
+                        this.handleGameColorSelect(payload);
                         break;
                 }
                 this.update();
@@ -447,6 +527,55 @@
                     }, 8000);
                 }
             }
+            
+            startGame() {
+                this.state.game.inProgress = true;
+                this.state.game.score = 0;
+                this.state.game.round = 1;
+                this.state.game.currentColor = this.getRandomColor();
+                this.state.game.startTime = Date.now();
+                this.showCoachMessage("Game started! Match the color as quickly as possible.", 'fa-gamepad');
+            }
+            
+            getRandomColor() {
+                const colors = ['red', 'blue', 'green', 'yellow', 'purple'];
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+            
+            handleGameColorSelect(color) {
+                if (!this.state.game.inProgress) return;
+                
+                if (color === this.state.game.currentColor) {
+                    // Correct selection
+                    const reactionTime = Date.now() - this.state.game.startTime;
+                    const scoreGain = Math.max(100, 500 - reactionTime);
+                    this.state.game.score += scoreGain;
+                    this.state.game.round++;
+                    
+                    // Show feedback
+                    const stimulus = document.querySelector('.game-stimulus');
+                    stimulus.classList.add('feedback-correct');
+                    setTimeout(() => stimulus.classList.remove('feedback-correct'), 500);
+                    
+                    // Next round
+                    this.state.game.currentColor = this.getRandomColor();
+                    this.state.game.startTime = Date.now();
+                    
+                    // Check if level up
+                    if (this.state.game.score > 1000 && this.state.game.round % 5 === 0) {
+                        this.state.user.level++;
+                        this.showCoachMessage(`Level up! You're now at level ${this.state.user.level}`, 'fa-trophy');
+                    }
+                } else {
+                    // Incorrect selection
+                    this.state.game.score = Math.max(0, this.state.game.score - 50);
+                    
+                    // Show feedback
+                    const stimulus = document.querySelector('.game-stimulus');
+                    stimulus.classList.add('feedback-incorrect');
+                    setTimeout(() => stimulus.classList.remove('feedback-incorrect'), 500);
+                }
+            }
         }
 
         // --- [ UI MANAGER CLASS ] ---
@@ -454,7 +583,6 @@
             constructor(app, rootEl) {
                 this.app = app;
                 this.rootEl = rootEl;
-                this.three = { scene: null, camera: null, renderer: null, brain: null };
             }
             
             showLoader(text) {
@@ -511,6 +639,10 @@
                                         <div class="hud-label">Training</div>
                                         <div class="hud-value">0/3 sessions</div>
                                     </div>
+                                    <div class="hud-item">
+                                        <div class="hud-label">Focus Level</div>
+                                        <div class="hud-value">${Math.round(state.cognitiveProfile.attention)}%</div>
+                                    </div>
                                 </div>
                                 <div>
                                     <button class="button" data-action="START_MEDITATION" data-payload="0">Start Meditation</button>
@@ -528,14 +660,6 @@
                         </div>
                     </div>
                 `;
-            }
-            
-            renderTabContent(tab, state) {
-                switch (tab) {
-                    case 'dashboard': return this.renderDashboard(state);
-                    case 'mindfulness': return this.renderMindfulness(state);
-                    default: return `<div class="card"><p>Module under development</p></div>`;
-                }
             }
             
             renderMindfulness(state) {
@@ -570,46 +694,164 @@
                                 <p>• Notice thoughts without judgment, let them pass</p>
                                 <p>• Start with 5-minute sessions and gradually increase</p>
                                 <p>• Practice daily for best results</p>
+                                <p>• Use ambient sounds to deepen your focus</p>
+                                <p>• Maintain a comfortable posture throughout</p>
                             </div>
                         </div>
                     </div>
-                    <style>
-                        .meditation-options {
-                            display: grid;
-                            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-                            gap: 1rem;
-                            margin-top: 1rem;
-                        }
-                        .meditation-option {
-                            background: var(--glass);
-                            border-radius: 8px;
-                            padding: 1rem;
-                            text-align: center;
-                            cursor: pointer;
-                            transition: all 0.3s;
-                        }
-                        .meditation-option:hover {
-                            background: var(--primary);
-                            transform: translateY(-5px);
-                        }
-                        .meditation-option i {
-                            font-size: 2rem;
-                            margin-bottom: 0.5rem;
-                            display: block;
-                        }
-                        .mindfulness-tips p {
-                            margin-bottom: 0.8rem;
-                            padding-left: 1.5rem;
-                            position: relative;
-                        }
-                        .mindfulness-tips p:before {
-                            content: "•";
-                            position: absolute;
-                            left: 0;
-                            color: var(--primary-light);
-                        }
-                    </style>
                 `;
+            }
+            
+            renderNeuroGame(state) {
+                return `
+                    <div class="neuro-game-container">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title"><i class="fas fa-gamepad"></i> Focus Training</div>
+                            </div>
+                            
+                            <div class="game-hud">
+                                <div class="hud-item">
+                                    <div class="hud-label">Level</div>
+                                    <div class="hud-value">${state.user.level}</div>
+                                </div>
+                                <div class="hud-item">
+                                    <div class="hud-label">Score</div>
+                                    <div class="hud-value">${state.game.score}</div>
+                                </div>
+                                <div class="hud-item">
+                                    <div class="hud-label">Round</div>
+                                    <div class="hud-value">${state.game.round}</div>
+                                </div>
+                            </div>
+                            
+                            <div class="game-stimulus" style="color: var(--${state.game.inProgress ? state.game.currentColor : 'text'});">
+                                <i class="fas fa-${state.game.inProgress ? 'circle' : 'play'}"></i>
+                            </div>
+                            
+                            <div class="game-grid">
+                                <div class="color-option red" data-action="GAME_COLOR_SELECT" data-payload="red"></div>
+                                <div class="color-option blue" data-action="GAME_COLOR_SELECT" data-payload="blue"></div>
+                                <div class="color-option green" data-action="GAME_COLOR_SELECT" data-payload="green"></div>
+                                <div class="color-option yellow" data-action="GAME_COLOR_SELECT" data-payload="yellow"></div>
+                                <div class="color-option purple" data-action="GAME_COLOR_SELECT" data-payload="purple"></div>
+                            </div>
+                            
+                            <div class="game-controls">
+                                ${state.game.inProgress ? 
+                                    '<button class="button danger" data-action="CHANGE_TAB" data-payload="dashboard">End Game</button>' : 
+                                    '<button class="button" data-action="START_GAME">Start Training</button>'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            renderEEGAnalysis(state) {
+                return `
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title"><i class="fas fa-brain"></i> EEG Analysis</div>
+                        </div>
+                        <div id="eeg-3d-container">
+                            <div class="eeg-visualization">
+                                <div class="brain-activity"></div>
+                            </div>
+                        </div>
+                        <div class="page-grid" style="margin-top: 1.5rem;">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="card-title"><i class="fas fa-wave-square"></i> Brainwave Activity</div>
+                                </div>
+                                <div class="hud-item">
+                                    <div class="hud-label">Delta Waves (Deep Sleep)</div>
+                                    <div class="hud-value">${Math.round(state.eeg.bands.delta * 100)}%</div>
+                                </div>
+                                <div class="hud-item">
+                                    <div class="hud-label">Theta Waves (Meditation)</div>
+                                    <div class="hud-value">${Math.round(state.eeg.bands.theta * 100)}%</div>
+                                </div>
+                                <div class="hud-item">
+                                    <div class="hud-label">Alpha Waves (Relaxation)</div>
+                                    <div class="hud-value">${Math.round(state.eeg.bands.alpha * 100)}%</div>
+                                </div>
+                                <div class="hud-item">
+                                    <div class="hud-label">Beta Waves (Focus)</div>
+                                    <div class="hud-value">${Math.round(state.eeg.bands.beta * 100)}%</div>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="card-title"><i class="fas fa-lightbulb"></i> Interpretation</div>
+                                <p>Your current brain activity shows:</p>
+                                <ul>
+                                    <li>Strong alpha waves indicating relaxation</li>
+                                    <li>Moderate beta waves suggesting focused attention</li>
+                                    <li>Balanced theta waves for creative thinking</li>
+                                </ul>
+                                <p>For enhanced focus, try a 5-minute breathing exercise.</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            renderProgress(state) {
+                return `
+                    <div class="page-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title"><i class="fas fa-trophy"></i> Achievements</div>
+                            </div>
+                            <div class="progress-grid">
+                                <div>
+                                    <div class="hud-item">
+                                        <div class="hud-label">Current Level</div>
+                                        <div class="hud-value">${state.user.level}</div>
+                                    </div>
+                                    <div class="hud-item">
+                                        <div class="hud-label">Sessions Completed</div>
+                                        <div class="hud-value">${state.sessions.length}</div>
+                                    </div>
+                                    <div class="hud-item">
+                                        <div class="hud-label">Focus Streak</div>
+                                        <div class="hud-value">3 days</div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="hud-item">
+                                        <div class="hud-label">Memory</div>
+                                        <div class="hud-value">${state.cognitiveProfile.memory}</div>
+                                    </div>
+                                    <div class="hud-item">
+                                        <div class="hud-label">Attention</div>
+                                        <div class="hud-value">${state.cognitiveProfile.attention}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title"><i class="fas fa-chart-line"></i> Cognitive Progress</div>
+                            </div>
+                            <div class="trend-chart-container">
+                                <canvas id="progressChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            renderTabContent(tab, state) {
+                switch (tab) {
+                    case 'dashboard': return this.renderDashboard(state);
+                    case 'mindfulness': return this.renderMindfulness(state);
+                    case 'neuro-game': return this.renderNeuroGame(state);
+                    case 'analysis': return this.renderEEGAnalysis(state);
+                    case 'progress': return this.renderProgress(state);
+                    default: return `<div class="card"><p>Module under development</p></div>`;
+                }
             }
 
             attachEventListeners() {
@@ -636,6 +878,26 @@
             postRender(state) {
                 // Initialize charts
                 this.initCharts();
+                
+                // Simulate EEG data changes
+                if (state.ui.activeTab === 'analysis') {
+                    this.simulateEEGActivity();
+                }
+            }
+            
+            simulateEEGActivity() {
+                setInterval(() => {
+                    if (this.app.state.ui.activeTab === 'analysis') {
+                        // Update EEG bands with simulated data
+                        this.app.state.eeg.bands = {
+                            delta: Math.random() * 0.3,
+                            theta: Math.random() * 0.4,
+                            alpha: 0.4 + Math.random() * 0.3,
+                            beta: 0.3 + Math.random() * 0.4
+                        };
+                        this.app.update();
+                    }
+                }, 3000);
             }
             
             initCharts() {
@@ -716,11 +978,60 @@
                         }
                     });
                 }
+                
+                // Progress Chart
+                const progressCtx = document.getElementById('progressChart')?.getContext('2d');
+                if (progressCtx) {
+                    new Chart(progressCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Memory', 'Attention', 'Speed', 'Problem Solving', 'Flexibility'],
+                            datasets: [{
+                                label: 'Current',
+                                data: [
+                                    this.app.state.cognitiveProfile.memory,
+                                    this.app.state.cognitiveProfile.attention,
+                                    this.app.state.cognitiveProfile.speed,
+                                    this.app.state.cognitiveProfile.problemSolving,
+                                    this.app.state.cognitiveProfile.flexibility
+                                ],
+                                backgroundColor: 'rgba(128, 90, 213, 0.7)',
+                                borderColor: 'rgba(128, 90, 213, 1)',
+                                borderWidth: 1
+                            }, {
+                                label: 'Baseline',
+                                data: [40, 50, 45, 35, 40],
+                                backgroundColor: 'rgba(160, 174, 192, 0.5)',
+                                borderColor: 'rgba(160, 174, 192, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: 100,
+                                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                                    ticks: { color: 'var(--text-muted)' }
+                                },
+                                x: {
+                                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                                    ticks: { color: 'var(--text-muted)' }
+                                }
+                            },
+                            plugins: {
+                                legend: { labels: { color: 'var(--text)' } }
+                            }
+                        }
+                    });
+                }
             }
         }
 
         // Initialize the application
-        new App(document.getElementById('app-root')).init();
+        const app = new App(document.getElementById('app-root'));
+        app.init();
     </script>
 </body>
 </html>
