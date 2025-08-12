@@ -1,835 +1,1407 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>NeuroLogicX — All-in-One</title>
-
-<!-- Chart.js CDN -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-
-<style>
-  :root{
-    --bg:#071029;
-    --panel:#08233b;
-    --muted:#9fb3c8;
-    --accent:#22c55e;
-    --accent2:#2b6cb0;
-    --card-grad: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    --glass: rgba(255,255,255,0.03);
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue';background:
-    radial-gradient(1200px 400px at 10% 10%, rgba(43,76,176,0.07), transparent),
-    linear-gradient(180deg,var(--bg),#03213a);color:#e6f3ff}
-  .wrap{max-width:1200px;margin:18px auto;padding:18px}
-  header{display:flex;align-items:center;justify-content:space-between;gap:12px}
-  .brand{font-weight:800;font-size:20px;color:var(--accent)}
-  .sub{color:var(--muted);font-size:13px}
-  .top-actions{display:flex;gap:8px;align-items:center}
-  button{background:linear-gradient(90deg,var(--accent2),#16a34a);border:none;padding:8px 12px;border-radius:10px;color:#001;font-weight:700;cursor:pointer;box-shadow:0 6px 18px rgba(11,22,39,0.4)}
-  button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);font-weight:600;box-shadow:none}
-  .grid{display:grid;grid-template-columns:1fr 380px;gap:18px;margin-top:14px}
-  .card{background:var(--card-grad);border-radius:14px;padding:14px;border:1px solid rgba(255,255,255,0.04);backdrop-filter: blur(6px)}
-  .row{display:flex;gap:8px;align-items:center}
-  .small{font-size:13px;color:var(--muted)}
-  .muted{color:var(--muted)}
-  .pill{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.02);font-weight:700}
-  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-  .tab{padding:8px 12px;border-radius:999px;background:rgba(255,255,255,0.02);cursor:pointer;border:1px solid rgba(255,255,255,0.02)}
-  .tab.active{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#001}
-  .panel{display:none;margin-top:12px}
-  .panel.active{display:block}
-  .stimulus{height:120px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:linear-gradient(180deg,#eef6ff,#e6fbff);color:#023;font-size:48px;transition:transform .12s}
-  .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-  .metric{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed rgba(255,255,255,0.02)}
-  .log{height:140px;overflow:auto;background:rgba(0,0,0,0.16);padding:8px;border-radius:8px;color:#dff3e6;font-family:monospace;font-size:12px}
-  .tiny{font-size:12px;color:var(--muted)}
-  .canvas-wrap{border-radius:8px;overflow:hidden}
-  .code{background:#022636;padding:10px;border-radius:8px;color:#bff0c7;font-family:monospace;font-size:12px}
-  .cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(60px,1fr));gap:8px}
-  .card-face{height:72px;border-radius:8px;background:linear-gradient(180deg,#fff,#f6fbff);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;border:2px solid rgba(0,0,0,0.04);user-select:none}
-  .drag-area{display:flex;gap:8px;align-items:center}
-  .shape{width:80px;height:80px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#022;font-weight:800;cursor:grab}
-  .target{width:100px;height:100px;border-radius:10px;border:2px dashed rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;min-width:100px}
-  .video-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .video-card{border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,0.04);background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01))}
-  .video-card iframe{width:100%;height:220px;border:0;display:block}
-  .footer{margin-top:18px;text-align:center;color:var(--muted);font-size:13px}
-  @media (max-width:1000px){ .grid{grid-template-columns:1fr} .right{order:2} .video-grid{grid-template-columns:1fr} }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NeuroApp | Cognitive Testing Suite</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-light: #4895ef;
+      --secondary: #3f37c9;
+      --success: #4cc9f0;
+      --card-bg: rgba(15, 23, 42, 0.6);
+      --glass: rgba(255, 255, 255, 0.05);
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --bg: #0f172a;
+      --border: rgba(0, 204, 255, 0.15);
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+      min-height: 100vh;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(67, 97, 238, 0.1) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(76, 201, 240, 0.1) 0%, transparent 20%),
+        linear-gradient(135deg, #0f172a, #1e293b);
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    header {
+      text-align: center;
+      padding: 20px 0 30px;
+      position: relative;
+    }
+    
+    header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--success), transparent);
+      border-radius: 3px;
+    }
+    
+    .logo {
+      font-size: 2.8rem;
+      font-weight: 800;
+      background: linear-gradient(90deg, var(--primary), var(--success));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+    
+    .tagline {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .neuroapp-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px;
+      background: rgba(30, 41, 59, 0.8);
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+    }
+    
+    .neuroapp-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    
+    .neuroapp-header h1 {
+      margin: 0;
+      font-size: 1.25rem;
+      color: var(--success);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .neuroapp-header h1 i {
+      font-size: 1.4rem;
+    }
+    
+    .neuroapp-grid {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 18px;
+      margin-top: 20px;
+    }
+    
+    .neuroapp-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 6px 20px rgba(11, 16, 29, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .neuroapp-small {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    
+    .neuroapp-button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .neuroapp-button:hover {
+      background: var(--primary-light);
+      transform: translateY(-2px);
+    }
+    
+    .neuroapp-button:active {
+      transform: translateY(0);
+    }
+    
+    .neuroapp-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    
+    .neuroapp-pill {
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--glass);
+      font-weight: 600;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .neuroapp-game-area {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-top: 12px;
+    }
+    
+    .neuroapp-stimulus {
+      height: 120px;
+      width: 100%;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 56px;
+      background: rgba(0, 0, 0, 0.2);
+      border: 2px solid var(--border);
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .neuroapp-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 200px;
+    }
+    
+    .neuroapp-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    
+    .neuroapp-tab {
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.05);
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .neuroapp-tab:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .neuroapp-tab.active {
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      color: white;
+    }
+    
+    .neuroapp-label {
+      display: block;
+      font-weight: 600;
+      margin-top: 8px;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+    
+    .neuroapp-input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.2);
+      color: var(--text);
+      font-family: inherit;
+    }
+    
+    .neuroapp-input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    
+    .neuroapp-metrics-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    
+    .neuroapp-metric {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.15);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .neuroapp-chart-wrap {
+      height: 220px;
+      width: 100%;
+    }
+    
+    .neuroapp-log {
+      height: 160px;
+      overflow: auto;
+      background: rgba(0, 0, 0, 0.3);
+      color: var(--text);
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-family: monospace;
+      line-height: 1.8;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .neuroapp-flex-col {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .neuroapp-export-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    
+    .neuroapp-sequence-display {
+      font-size: 48px;
+      text-align: center;
+      margin: 20px 0;
+      color: var(--success);
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .btn-danger {
+      background: #ef4444;
+    }
+    
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+    
+    .btn-success {
+      background: #10b981;
+    }
+    
+    .btn-success:hover {
+      background: #059669;
+    }
+    
+    .btn-secondary {
+      background: #6b7280;
+    }
+    
+    .btn-secondary:hover {
+      background: #4b5563;
+    }
+    
+    .active-game {
+      animation: pulse 1.5s infinite;
+      border-color: var(--success);
+    }
+    
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(76, 201, 240, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(76, 201, 240, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(76, 201, 240, 0); }
+    }
+    
+    .success-flash {
+      animation: successFlash 0.5s;
+    }
+    
+    @keyframes successFlash {
+      0% { background-color: rgba(16, 185, 129, 0.3); }
+      100% { background-color: transparent; }
+    }
+    
+    .error-flash {
+      animation: errorFlash 0.5s;
+    }
+    
+    @keyframes errorFlash {
+      0% { background-color: rgba(239, 68, 68, 0.3); }
+      100% { background-color: transparent; }
+    }
+    
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      padding-top: 20px;
+      color: var(--text-muted);
+      font-size: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    @media (max-width: 980px) {
+      .neuroapp-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .neuroapp-game-area {
+        flex-direction: column;
+      }
+      
+      .neuroapp-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+    
+    @media (max-width: 600px) {
+      .neuroapp-tabs {
+        overflow-x: auto;
+        padding-bottom: 10px;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+      }
+      
+      .neuroapp-tab {
+        flex-shrink: 0;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <div>
-      <div class="brand">NeuroLogicX — All-in-One</div>
-      <div class="sub">All outputs are derived from your on-screen interactions. No fabricated reports. Embedded videos provided.</div>
-    </div>
+  <div class="container">
+    <header>
+      <div class="logo">NEUROAPP</div>
+      <div class="tagline">Advanced Cognitive Assessment & Enhancement Platform</div>
+    </header>
+    
+    <div class="neuroapp-container">
+      <div class="neuroapp-header">
+        <h1><i class="fas fa-brain"></i> NeuroApp — Cognitive Testing Suite</h1>
+        <div class="neuroapp-row">
+          <div class="neuroapp-pill"><i class="fas fa-database"></i> Local-only • No API keys</div>
+          <button id="exportAll" class="neuroapp-button"><i class="fas fa-file-export"></i> Export All Sessions</button>
+        </div>
+      </div>
 
-    <div class="top-actions">
-      <div class="tiny">Profile:</div>
-      <input id="profileName" placeholder="Your name" style="padding:6px;border-radius:8px;border:none" />
-      <button id="btnCreateProfile" class="ghost">Create / Select</button>
-      <button id="btnExport" class="ghost">Export JSON</button>
-      <button id="btnCSV" class="ghost">Export CSV</button>
-    </div>
-  </header>
+      <div class="neuroapp-tabs" id="mainTabs">
+        <div class="neuroapp-tab active" data-tab="home"><i class="fas fa-home"></i> Home</div>
+        <div class="neuroapp-tab" data-tab="reaction"><i class="fas fa-bolt"></i> Reaction</div>
+        <div class="neuroapp-tab" data-tab="nback"><i class="fas fa-memory"></i> N-Back</div>
+        <div class="neuroapp-tab" data-tab="dual"><i class="fas fa-tasks"></i> Dual-Task</div>
+        <div class="neuroapp-tab" data-tab="eegsim"><i class="fas fa-wave-square"></i> EEG Simulator</div>
+        <div class="neuroapp-tab" data-tab="insights"><i class="fas fa-chart-line"></i> Insights</div>
+      </div>
 
-  <div class="tabs" id="mainTabs">
-    <div class="tab active" data-tab="train">Train</div>
-    <div class="tab" data-tab="memory">Memory</div>
-    <div class="tab" data-tab="spatial">Visual-Spatial</div>
-    <div class="tab" data-tab="meds">Meditation & Yoga</div>
-    <div class="tab" data-tab="eeg">EEG</div>
-    <div class="tab" data-tab="charts">Charts</div>
-    <div class="tab" data-tab="settings">Settings</div>
+      <div class="neuroapp-grid">
+        <div>
+          <!-- HOME -->
+          <div class="neuroapp-card" id="tab-home">
+            <h2 style="margin-top:0">Welcome to NeuroApp</h2>
+            <p class="neuroapp-small">This interactive module records millisecond-accurate interactions, calculates transparent derived "virtual-EEG" band estimates from behavior, and adapts difficulty based on your performance.</p>
+            <div class="neuroapp-metrics-list" style="margin-top:20px">
+              <div class="neuroapp-metric"><div><i class="fas fa-flask"></i> Features</div><div>Reaction, N-Back, Dual Task</div></div>
+              <div class="neuroapp-metric"><div><i class="fas fa-microchip"></i> Technology</div><div>Local Processing Only</div></div>
+              <div class="neuroapp-metric"><div><i class="fas fa-shield-alt"></i> Privacy</div><div>Your data never leaves your device</div></div>
+            </div>
+            <div style="margin-top:20px" class="neuroapp-row">
+              <button id="startDemo" class="neuroapp-button"><i class="fas fa-play-circle"></i> Run Quick Demo Session</button>
+              <button id="clearSessions" class="neuroapp-button btn-danger"><i class="fas fa-trash-alt"></i> Clear Data</button>
+            </div>
+          </div>
+
+          <!-- REACTION -->
+          <div class="neuroapp-card" id="tab-reaction" style="display:none;margin-top:12px">
+            <h3><i class="fas fa-bolt"></i> Reaction & Accuracy Game</h3>
+            <p class="neuroapp-small">Tap the matching color as fast as you can when the stimulus appears. Records RT, accuracy, and raw events.</p>
+            <div class="neuroapp-game-area">
+              <div class="neuroapp-stimulus" id="reactionStim">—</div>
+              <div class="neuroapp-controls">
+                <button id="reactionStart" class="neuroapp-button"><i class="fas fa-play"></i> Start Session (12 trials)</button>
+                <button id="reactionStop" class="neuroapp-button btn-danger" style="display:none"><i class="fas fa-stop"></i> Stop</button>
+                <label class="neuroapp-label">Trial count</label>
+                <input id="reactionCount" type="number" min="4" max="60" value="12" class="neuroapp-input" />
+              </div>
+            </div>
+            <div style="margin-top:12px" class="neuroapp-row">
+              <button id="reactionRed" class="neuroapp-button btn-danger"><i class="fas fa-circle"></i> Red</button>
+              <button id="reactionGreen" class="neuroapp-button btn-success"><i class="fas fa-circle"></i> Green</button>
+              <div style="margin-left:auto" class="neuroapp-small">Last RT: <span id="lastRT">—</span> ms</div>
+            </div>
+          </div>
+
+          <!-- N-BACK -->
+          <div class="neuroapp-card" id="tab-nback" style="display:none;margin-top:12px">
+            <h3><i class="fas fa-memory"></i> N-Back (working memory)</h3>
+            <p class="neuroapp-small">Remember the item n positions back. Adaptive n increases/decreases based on your performance.</p>
+            <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+              <label class="neuroapp-label" style="margin:0">Start N</label>
+              <input id="nbackStartN" type="number" min="1" max="5" value="2" class="neuroapp-input" style="width:70px" />
+              <label class="neuroapp-label" style="margin:0">Trials</label>
+              <input id="nbackTrials" type="number" min="10" max="60" value="20" class="neuroapp-input" style="width:80px" />
+              <button id="nbackStart" class="neuroapp-button"><i class="fas fa-play"></i> Start</button>
+              <button id="nbackStop" class="neuroapp-button btn-danger" style="display:none"><i class="fas fa-stop"></i> Stop</button>
+            </div>
+
+            <div class="neuroapp-sequence-display" id="nbackStim">—</div>
+
+            <div style="margin-top:8px" class="neuroapp-row">
+              <button class="neuroapp-button btn-success" id="nbackYes"><i class="fas fa-check"></i> Match</button>
+              <button class="neuroapp-button btn-danger" id="nbackNo"><i class="fas fa-times"></i> Not Match</button>
+              <div style="margin-left:auto" class="neuroapp-small">Current n: <span id="nbackCurN">2</span></div>
+            </div>
+          </div>
+
+          <!-- DUAL TASK -->
+          <div class="neuroapp-card" id="tab-dual" style="display:none;margin-top:12px">
+            <h3><i class="fas fa-tasks"></i> Dual-Task (visual + arithmetic)</h3>
+            <p class="neuroapp-small">Remember the visual symbol while quickly solving a small math problem.</p>
+            <div class="neuroapp-row" style="align-items:center;flex-wrap:wrap;gap:12px">
+              <label class="neuroapp-label" style="margin:0">Trials</label>
+              <input id="dualTrials" type="number" min="6" max="40" value="12" class="neuroapp-input" style="width:80px" />
+              <button id="dualStart" class="neuroapp-button"><i class="fas fa-play"></i> Start</button>
+              <button id="dualStop" class="neuroapp-button btn-danger" style="display:none"><i class="fas fa-stop"></i> Stop</button>
+            </div>
+
+            <div style="margin-top:12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+              <div style="flex:1">
+                <div class="neuroapp-stimulus" id="dualSymbol">—</div>
+              </div>
+              <div style="min-width:240px">
+                <div style="margin-bottom:8px"><strong>Math</strong></div>
+                <div class="neuroapp-card neuroapp-small" id="dualMath" style="padding:10px">—</div>
+                <input id="dualAnswer" type="text" class="neuroapp-input" placeholder="Type answer" style="margin-top:10px" />
+                <div style="margin-top:8px" class="neuroapp-row">
+                  <button id="dualSubmit" class="neuroapp-button"><i class="fas fa-paper-plane"></i> Submit</button>
+                  <div style="margin-left:auto" class="neuroapp-small">Last RT: <span id="dualLastRT">—</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- EEG SIMULATOR -->
+          <div class="neuroapp-card" id="tab-eegsim" style="display:none;margin-top:12px">
+            <h3><i class="fas fa-wave-square"></i> EEG Simulator (behavior → bands)</h3>
+            <p class="neuroapp-small">This transforms interaction metrics into EEG-like band values (delta/theta/alpha/beta/gamma).</p>
+
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <label class="neuroapp-label" style="margin:0">Window (sec)</label>
+              <input id="simWindow" type="number" min="1" max="10" value="2" class="neuroapp-input" style="width:80px" />
+              <label class="neuroapp-label" style="margin:0">Scale factor</label>
+              <input id="simScale" type="number" min="1" max="10" value="5" class="neuroapp-input" style="width:80px" />
+              <button id="runSim" class="neuroapp-button"><i class="fas fa-cogs"></i> Sim Latest Session</button>
+            </div>
+
+            <div style="margin-top:12px" class="neuroapp-grid" id="simGrid">
+              <div class="neuroapp-card">
+                <h4 style="margin-top:0">Band Estimates (latest window)</h4>
+                <div class="neuroapp-metrics-list" id="bandValues">
+                  <div class="neuroapp-metric"><div>Delta</div><div id="valDelta">—</div></div>
+                  <div class="neuroapp-metric"><div>Theta</div><div id="valTheta">—</div></div>
+                  <div class="neuroapp-metric"><div>Alpha</div><div id="valAlpha">—</div></div>
+                  <div class="neuroapp-metric"><div>Beta</div><div id="valBeta">—</div></div>
+                  <div class="neuroapp-metric"><div>Gamma</div><div id="valGamma">—</div></div>
+                </div>
+              </div>
+
+              <div class="neuroapp-card">
+                <h4 style="margin-top:0">Band Time Series</h4>
+                <div class="neuroapp-chart-wrap"><canvas id="bandsChart"></canvas></div>
+                <div style="margin-top:8px" class="neuroapp-small">You can re-run simulation for any saved session.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- INSIGHTS -->
+          <div class="neuroapp-card" id="tab-insights" style="display:none;margin-top:12px">
+            <h3><i class="fas fa-chart-line"></i> Insights & History</h3>
+            <p class="neuroapp-small">View past sessions, derived metrics, and raw event export.</p>
+            <div class="neuroapp-row" style="margin-top:8px;gap:8px;flex-wrap:wrap">
+              <select id="sessionSelect" class="neuroapp-input" style="width:240px;flex:1"><option value="">Select session</option></select>
+              <button id="viewSession" class="neuroapp-button"><i class="fas fa-eye"></i> View</button>
+              <button id="downloadRaw" class="neuroapp-button btn-secondary"><i class="fas fa-download"></i> Download raw</button>
+              <button id="deleteSession" class="neuroapp-button btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>
+            </div>
+
+            <div style="margin-top:12px" id="sessionDetails"></div>
+          </div>
+        </div>
+
+        <!-- right column -->
+        <div>
+          <div class="neuroapp-card">
+            <h3 style="margin-top:0"><i class="fas fa-chart-bar"></i> Live Metrics</h3>
+            <div class="neuroapp-metrics-list" style="margin-top:8px">
+              <div class="neuroapp-metric"><div><i class="fas fa-database"></i> Sessions stored</div><div id="numSessions">0</div></div>
+              <div class="neuroapp-metric"><div><i class="fas fa-history"></i> Last session type</div><div id="lastType">—</div></div>
+              <div class="neuroapp-metric"><div><i class="fas fa-stopwatch"></i> Last avg RT (ms)</div><div id="lastAvgRT">—</div></div>
+              <div class="neuroapp-metric"><div><i class="fas fa-bullseye"></i> Last accuracy</div><div id="lastAcc">—</div></div>
+            </div>
+
+            <div style="margin-top:12px">
+              <h4 class="neuroapp-small"><i class="fas fa-terminal"></i> Activity Log</h4>
+              <div class="neuroapp-log" id="quickLog">System initialized at <span id="initTime"></span></div>
+            </div>
+          </div>
+
+          <div class="neuroapp-card" style="margin-top:12px">
+            <h3 style="margin-top:0"><i class="fas fa-chart-pie"></i> Band Overview</h3>
+            <div class="neuroapp-chart-wrap"><canvas id="overviewChart"></canvas></div>
+            <div style="margin-top:8px" class="neuroapp-small">Overview of most recent simulation run.</div>
+          </div>
+
+          <div class="neuroapp-card" style="margin-top:12px">
+            <h3 style="margin-top:0"><i class="fas fa-cog"></i> Session Actions</h3>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+              <button id="replayLast" class="neuroapp-button"><i class="fas fa-redo"></i> Replay Last Session</button>
+              <button id="genReport" class="neuroapp-button btn-success"><i class="fas fa-file-pdf"></i> Generate Report</button>
+            </div>
+            <div style="margin-top:12px" class="neuroapp-small">Reports contain raw events & computed metrics.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <footer>
+      <p>© 2023 NeuroApp - Cognitive Testing Suite</p>
+      <p style="margin-top:10px;">Powered by Neuroscience & AI | Your data is always secure and private</p>
+    </footer>
   </div>
-
-  <div class="grid" style="margin-top:12px">
-    <!-- left column -->
-    <div>
-      <!-- TRAIN -->
-      <div id="panel-train" class="panel active card">
-        <h3>Quick Reaction Session</h3>
-        <div class="row">
-          <div style="flex:1">
-            <div id="stim" class="stimulus">—</div>
-            <div class="controls">
-              <button id="startSession">Start 12-trial Session</button>
-              <button id="stopSession" class="ghost">Stop</button>
-              <div class="tiny pill" id="sessionStatus">Idle</div>
-            </div>
-            <div style="margin-top:10px" class="tiny muted">Click anywhere on the page when the stimulus appears.</div>
-          </div>
-
-          <div style="width:280px;margin-left:12px">
-            <div class="card small muted">
-              <div class="metric"><div>Sessions stored</div><div id="numSessions">0</div></div>
-              <div class="metric"><div>Last avg RT (ms)</div><div id="lastAvgRT">—</div></div>
-              <div class="metric"><div>Last accuracy</div><div id="lastAcc">—</div></div>
-              <div class="metric"><div>Engagement idx</div><div id="lastEng">—</div></div>
-            </div>
-
-            <div style="margin-top:8px" class="card">
-              <div class="small muted">Quick actions</div>
-              <div style="margin-top:8px" class="row">
-                <button id="btnHints" class="ghost">Hint</button>
-                <button id="btnMute" class="ghost">Toggle Sound</button>
-                <button id="btnReset" class="ghost">Clear Data</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div style="margin-top:12px" class="card">
-          <h4 class="small muted">Session Log (raw events)</h4>
-          <div id="log" class="log"></div>
-        </div>
-      </div>
-
-      <!-- MEMORY -->
-      <div id="panel-memory" class="panel card" style="display:none">
-        <h3>Memory Match & Sequence Recall</h3>
-        <div style="display:flex;gap:12px;align-items:flex-start">
-          <div style="flex:1">
-            <div class="card">
-              <div class="row" style="align-items:center;justify-content:space-between">
-                <div>
-                  <button id="memStart" class="button">Start Memory Match (8 pairs)</button>
-                  <button id="memShuffle" class="ghost">Shuffle</button>
-                </div>
-                <div class="tiny muted">Moves: <span id="memMoves">0</span></div>
-              </div>
-              <div style="margin-top:10px" id="memBoard" class="cards-grid"></div>
-            </div>
-
-            <div style="margin-top:10px" class="card">
-              <h4 class="small muted">Sequence Recall</h4>
-              <div class="tiny muted">A sequence will be shown; reproduce it in order.</div>
-              <div style="margin-top:8px"><button id="seqStart" class="button">Start Sequence (5 items)</button><button id="seqSubmit" class="ghost">Submit</button></div>
-              <div style="margin-top:10px"><div id="seqDisplay" class="cards-grid"></div></div>
-            </div>
-          </div>
-
-          <div style="width:320px">
-            <div class="card">
-              <h4 class="small muted">Memory Metrics</h4>
-              <div class="metric"><div>Matches</div><div id="memMatches">0</div></div>
-              <div class="metric"><div>Accuracy</div><div id="memAcc">—</div></div>
-              <div class="metric"><div>Time</div><div id="memTime">—</div></div>
-            </div>
-
-            <div class="card" style="margin-top:10px">
-              <h4 class="small muted">Hints & Tips</h4>
-              <ul class="tiny muted">
-                <li>Chunk items into groups of 2–3</li>
-                <li>Rehearse sequence aloud</li>
-                <li>Take short breaks</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SPATIAL -->
-      <div id="panel-spatial" class="panel card" style="display:none">
-        <h3>Visual-Spatial Puzzle — Drag & Drop</h3>
-        <div class="row" style="gap:12px;align-items:flex-start">
-          <div style="flex:1">
-            <div class="card">
-              <div class="tiny muted">Drag shapes into matching targets.</div>
-              <div style="margin-top:12px" class="drag-area">
-                <div id="shapes" style="display:flex;gap:10px;flex-wrap:wrap"></div>
-                <div style="flex:1;display:flex;flex-direction:column;gap:8px">
-                  <div id="targetRow" style="display:flex;gap:8px"></div>
-                </div>
-              </div>
-            </div>
-
-            <div style="margin-top:10px" class="card">
-              <div class="row"><button id="spatialStart" class="button">New Spatial Puzzle</button><button id="spatialHint" class="ghost">Hint</button></div>
-            </div>
-          </div>
-
-          <div style="width:300px">
-            <div class="card">
-              <h4 class="small muted">Spatial Metrics</h4>
-              <div class="metric"><div>Placed</div><div id="placedCount">0</div></div>
-              <div class="metric"><div>Accuracy</div><div id="spatialAcc">—</div></div>
-            </div>
-
-            <div class="card" style="margin-top:10px">
-              <h4 class="small muted">Tips</h4>
-              <div class="tiny muted">Rotate mentally then place. Use center-out strategy.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- MEDITATION & YOGA -->
-      <div id="panel-meds" class="panel card" style="display:none">
-        <h3>Meditation & Yoga — Watch and Follow</h3>
-        <div class="tiny muted">These are embedded YouTube videos you asked to be included. Click "Open" to play in-residence or "Open in new tab".</div>
-        <div style="margin-top:12px" class="video-grid">
-          <!-- Yoga -->
-          <div class="video-card card">
-            <div style="padding:10px">
-              <strong>Yoga Session</strong>
-              <div class="tiny muted">Guided Yoga</div>
-              <div style="margin-top:8px">
-                <iframe id="yogaFrame" src="https://www.youtube.com/embed/yPK7ISPEu3M?rel=0&modestbranding=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                <div style="margin-top:8px" class="row">
-                  <button onclick="openVideo('https://www.youtube.com/watch?v=yPK7ISPEu3M')">Open</button>
-                  <button onclick="openVideoNew('https://www.youtube.com/watch?v=yPK7ISPEu3M')" class="ghost">Open in new tab</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Breathing -->
-          <div class="video-card card">
-            <div style="padding:10px">
-              <strong>Breathing Exercise</strong>
-              <div class="tiny muted">Guided breathing</div>
-              <div style="margin-top:8px">
-                <iframe id="breathFrame" src="https://www.youtube.com/embed/395ZloN4Rr8?rel=0&modestbranding=1" allowfullscreen></iframe>
-                <div style="margin-top:8px" class="row">
-                  <button onclick="openVideo('https://www.youtube.com/watch?v=395ZloN4Rr8')">Open</button>
-                  <button onclick="openVideoNew('https://www.youtube.com/watch?v=395ZloN4Rr8')" class="ghost">Open in new tab</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Mindfulness -->
-          <div class="video-card card">
-            <div style="padding:10px">
-              <strong>Mindfulness Exercise</strong>
-              <div class="tiny muted">Short guided mindfulness</div>
-              <div style="margin-top:8px">
-                <iframe id="mindfulFrame" src="https://www.youtube.com/embed/LiUnFJ8P4gM?rel=0&modestbranding=1" allowfullscreen></iframe>
-                <div style="margin-top:8px" class="row">
-                  <button onclick="openVideo('https://www.youtube.com/watch?v=LiUnFJ8P4gM')">Open</button>
-                  <button onclick="openVideoNew('https://www.youtube.com/watch?v=LiUnFJ8P4gM')" class="ghost">Open in new tab</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Meditation -->
-          <div class="video-card card">
-            <div style="padding:10px">
-              <strong>Meditation</strong>
-              <div class="tiny muted">Full guided meditation</div>
-              <div style="margin-top:8px">
-                <iframe id="medFrame" src="https://www.youtube.com/embed/j734gLbQFbU?rel=0&modestbranding=1" allowfullscreen></iframe>
-                <div style="margin-top:8px" class="row">
-                  <button onclick="openVideo('https://www.youtube.com/watch?v=j734gLbQFbU')">Open</button>
-                  <button onclick="openVideoNew('https://www.youtube.com/watch?v=j734gLbQFbU')" class="ghost">Open in new tab</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div style="margin-top:12px" class="card">
-          <strong>Timer</strong>
-          <div class="row" style="margin-top:8px">
-            <button onclick="setTimer(60)" class="ghost">1 min</button>
-            <button onclick="setTimer(180)" class="ghost">3 min</button>
-            <button onclick="setTimer(300)" class="ghost">5 min</button>
-            <div id="timerDisplay" class="tiny muted" style="margin-left:12px">No timer</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- EEG -->
-      <div id="panel-eeg" class="panel card" style="display:none">
-        <h3>Behavior-Derived EEG Band Estimates & Waveform</h3>
-        <div class="row">
-          <div style="flex:1">
-            <div class="canvas-wrap card">
-              <canvas id="eegCanvas" width="800" height="160" style="width:100%;height:160px;border-radius:8px"></canvas>
-            </div>
-            <div style="margin-top:8px" class="row">
-              <button id="simBands" class="button">Simulate Bands for Latest Session</button>
-              <button id="clearBands" class="ghost">Clear Band History</button>
-            </div>
-          </div>
-
-          <div style="width:320px">
-            <div class="card">
-              <h4 class="small muted">Latest Bands (behavior-derived)</h4>
-              <div class="metric"><div>Delta</div><div id="bDelta">—</div></div>
-              <div class="metric"><div>Theta</div><div id="bTheta">—</div></div>
-              <div class="metric"><div>Alpha</div><div id="bAlpha">—</div></div>
-              <div class="metric"><div>Beta</div><div id="bBeta">—</div></div>
-              <div class="metric"><div>Gamma</div><div id="bGamma">—</div></div>
-            </div>
-
-            <div class="card" style="margin-top:10px">
-              <h4 class="small muted">Formula (transparent)</h4>
-              <div class="code">
-Engagement = (baselineRT / meanRT) × accuracy
-Fatigue = meanRT / baselineRT + (1 - accuracy)
-Bands derived deterministically from meanRT, accuracy, RT variance.
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- CHARTS -->
-      <div id="panel-charts" class="panel card" style="display:none">
-        <h3>Charts: Session Trends & Band Timeline</h3>
-        <div style="display:flex;gap:12px;flex-wrap:wrap">
-          <div style="flex:1" class="card">
-            <canvas id="perfChart" height="160"></canvas>
-          </div>
-          <div style="width:420px" class="card">
-            <canvas id="bandChart" height="160"></canvas>
-          </div>
-        </div>
-      </div>
-
-      <!-- SETTINGS -->
-      <div id="panel-settings" class="panel card" style="display:none">
-        <h3>Settings</h3>
-        <div class="row" style="gap:12px;align-items:center">
-          <label class="tiny muted">Theme</label>
-          <select id="themeSelect" style="padding:6px;border-radius:8px">
-            <option value="calm">Calm (Blue)</option>
-            <option value="forest">Forest (Green)</option>
-            <option value="sunset">Sunset (Orange)</option>
-            <option value="dark">Dark</option>
-          </select>
-          <label class="tiny muted">Baseline RT (ms)</label>
-          <input id="baselineRT" type="number" value="600" style="width:100px;padding:6px;border-radius:8px" />
-        </div>
-
-        <div style="margin-top:12px" class="card">
-          <h4 class="small muted">User Profile & XP</h4>
-          <div class="metric"><div>Level</div><div id="userLevel">1</div></div>
-          <div class="metric"><div>XP</div><div id="userXP">0</div></div>
-          <div style="margin-top:8px" class="small muted">All progress is stored in your browser localStorage.</div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- right column -->
-    <div class="right">
-      <div class="card">
-        <h4 class="small muted">Live Metrics</h4>
-        <div class="metric"><div>Avg RT</div><div id="liveAvgRT">—</div></div>
-        <div class="metric"><div>Accuracy</div><div id="liveAcc">—</div></div>
-        <div class="metric"><div>Engagement</div><div id="liveEngagement">—</div></div>
-        <div class="metric"><div>Streak</div><div id="liveStreak">0</div></div>
-      </div>
-
-      <div class="card" style="margin-top:12px">
-        <h4 class="small muted">Quick</h4>
-        <div class="row" style="margin-top:8px"><button id="btnPlayBell">Bell</button><button id="btnPlayBreath">Breath audio</button></div>
-        <div style="margin-top:8px"><button id="btnShowReport" class="ghost">Generate Report (truthful)</button></div>
-      </div>
-
-      <div class="card" style="margin-top:12px">
-        <h4 class="small muted">Recent Sessions</h4>
-        <div id="recentList" class="small muted"></div>
-      </div>
-
-      <div class="card" style="margin-top:12px">
-        <h4 class="small muted">Controls</h4>
-        <div class="row" style="margin-top:8px"><button id="btnReplayLast" class="ghost">Replay Last</button><button id="btnImport" class="ghost">Import JSON</button></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="footer">
-    <div class="tiny muted">Everything stored locally. The EEG waveform and bands are behavior-derived estimates (not biosignals). Formulas are visible in the EEG panel.</div>
-  </div>
-</div>
-
-<!-- sounds -->
-<audio id="bellAudio" src="https://cdn.pixabay.com/audio/2022/02/15/audio_3a7b8d2f6f.mp3"></audio>
-<audio id="breathAudio" src="https://cdn.pixabay.com/audio/2022/03/01/audio_1f6cb7a8d7.mp3"></audio>
-
-<script>
-/* -------------------------------
-   Utilities & Persistence
-   ------------------------------- */
-const S_KEY = 'neuro_sessions_v4'
-const P_KEY = 'neuro_profile_v1'
-function nowPerf(){ return performance.now() }
-function tNow(){ return Date.now() }
-function uid(prefix='id'){ return prefix + '_' + Math.random().toString(36).slice(2,10) }
-function loadSessions(){ try{ return JSON.parse(localStorage.getItem(S_KEY) || '[]') }catch(e){return[]} }
-function saveSession(session){ const a = loadSessions(); a.unshift(session); localStorage.setItem(S_KEY, JSON.stringify(a.slice(0,1000))); refreshUI(); return session }
-function clearSessions(){ localStorage.removeItem(S_KEY); refreshUI() }
-function loadProfile(){ try{ return JSON.parse(localStorage.getItem(P_KEY) || 'null') }catch(e){return null} }
-function saveProfile(p){ localStorage.setItem(P_KEY, JSON.stringify(p)); refreshProfileUI() }
-function createProfile(name='You'){ const p={ id: uid('u'), name, level:1, xp:0, xpToNext:100, streak:0, created:tNow() }; saveProfile(p); return p }
-
-/* -------------------------------
-   Sound / Audio
-   ------------------------------- */
-let audioCtx=null
-function ensureAudio(){ if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)() }
-function playClick(freq=660, vol=0.03){
-  ensureAudio()
-  const o = audioCtx.createOscillator(), g = audioCtx.createGain()
-  o.type='sine'; o.frequency.value=freq
-  g.gain.value=vol
-  o.connect(g); g.connect(audioCtx.destination)
-  o.start(); g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.12)
-  o.stop(audioCtx.currentTime + 0.13)
-}
-function playChime(){ ensureAudio(); const now=audioCtx.currentTime; [880,1320,1760].forEach((f,i)=>{ const o=audioCtx.createOscillator(), g=audioCtx.createGain(); o.type='sine'; o.frequency.value=f; g.gain.value=0.02; o.connect(g); g.connect(audioCtx.destination); o.start(now + i*0.06); g.gain.exponentialRampToValueAtTime(0.0001, now + i*0.06 + 0.36); o.stop(now + i*0.06 + 0.38); }) }
-
-/* -------------------------------
-   Behavior -> Bands (transparent formulas)
-   ------------------------------- */
-function computeSessionMetrics(session){
-  const trials = session.trials || []
-  const rts = trials.filter(t=>t.rt!=null).map(t=>t.rt)
-  const avgRT = rts.length ? rts.reduce((a,b)=>a+b,0)/rts.length : null
-  const acc = trials.length ? trials.filter(t=>t.correct).length / trials.length : null
-  const rtStd = rts.length ? Math.sqrt(rts.map(x=>Math.pow(x-avgRT,2)).reduce((a,b)=>a+b,0)/rts.length) : 0
-  return { avgRT, acc, rtStd, trialsCount: trials.length }
-}
-
-function behaviorToBands(metrics, options={scale:5, rFactor:1.6, baselineRT:600}){
-  const meanRT = metrics.meanRT || metrics.avgRT || 900
-  const accuracy = (typeof metrics.accuracy === 'number') ? metrics.accuracy : (metrics.acc || 0.75)
-  const rtStd = metrics.rtStd || 0.0
-  const impulsive = metrics.impulsiveErrors || 0
-  const totalErr = metrics.totalErrors || 1
-  const baseRT = options.baselineRT || 600
-  const speedFactor = Math.max(0.01, (baseRT - meanRT) / baseRT)
-  const fatigueFactor = Math.max(0, (meanRT - baseRT) / baseRT)
-  const varFactor = Math.min(1, rtStd / 300)
-  const stressFactor = Math.min(1, impulsive / Math.max(1, totalErr))
-  let beta = Math.max(0, speedFactor * (0.5 + 0.8*accuracy) - 0.3*varFactor + 0.2*(1-stressFactor))
-  let gamma = Math.max(0, speedFactor * (0.2 + 0.6*accuracy) - 0.2*varFactor)
-  let alpha = Math.max(0, 0.5*(1 - speedFactor) * (0.6 + 0.4*accuracy) - 0.1*stressFactor)
-  let theta = Math.max(0, fatigueFactor * (0.4 + 0.6*varFactor) + 0.2*stressFactor)
-  let delta = Math.max(0, fatigueFactor * (0.2 + 0.4*varFactor))
-  const rf = options.rFactor || 1.6
-  beta = Math.pow(beta + 1e-6, rf)
-  gamma = Math.pow(gamma + 1e-6, rf)
-  alpha = Math.pow(alpha + 1e-6, rf)
-  theta = Math.pow(theta + 1e-6, rf)
-  delta = Math.pow(delta + 1e-6, rf)
-  const norm = delta + theta + alpha + beta + gamma
-  const scale = (options.scale || 5) / Math.max(4.0, norm)
-  return {
-    delta: +(delta * scale).toFixed(4),
-    theta: +(theta * scale).toFixed(4),
-    alpha: +(alpha * scale).toFixed(4),
-    beta:  +(beta  * scale).toFixed(4),
-    gamma: +(gamma * scale).toFixed(4)
+  
+  <script>
+  // Initialize time
+  document.getElementById('initTime').textContent = new Date().toLocaleTimeString();
+  
+  // ---------- Utilities ----------
+  function log(msg) { 
+    const el = document.getElementById('quickLog'); 
+    el.innerHTML = `<span class="log-time">${new Date().toLocaleTimeString()}</span> — ${msg}<br>${el.innerHTML}`; 
   }
-}
-
-/* -------------------------------
-   EEG Canvas + Charts
-   ------------------------------- */
-const eegCanvas = document.getElementById('eegCanvas')
-const eegCtx = eegCanvas.getContext('2d')
-let lastBands = {delta:0.2,theta:0.4,alpha:1,beta:1.2,gamma:0.6}
-function setBands(b){ lastBands = b; updateBandUI(b) }
-function updateBandUI(b){
-  document.getElementById('bDelta').innerText = b.delta
-  document.getElementById('bTheta').innerText = b.theta
-  document.getElementById('bAlpha').innerText = b.alpha
-  document.getElementById('bBeta').innerText = b.beta
-  document.getElementById('bGamma').innerText = b.gamma
-}
-function synthSample(x,t){
-  const b=lastBands
-  const fd=1.5, ft=5, fa=10, fb=20, fg=34
-  return (b.delta*Math.sin(2*Math.PI*fd*(t + x*0.001)) +
-          b.theta*Math.sin(2*Math.PI*ft*(t + x*0.001)) +
-          b.alpha*Math.sin(2*Math.PI*fa*(t + x*0.001)) +
-          b.beta*Math.sin(2*Math.PI*fb*(t + x*0.001))*0.8 +
-          b.gamma*Math.sin(2*Math.PI*fg*(t + x*0.001))*0.4)
-}
-function drawEEG(){
-  const w = eegCanvas.clientWidth, h = eegCanvas.clientHeight
-  eegCtx.clearRect(0,0,w,h)
-  eegCtx.lineWidth = 2
-  eegCtx.strokeStyle = 'rgba(124,58,237,0.95)'
-  eegCtx.beginPath()
-  const now = performance.now()/1000
-  const step = 3
-  for(let x=0;x<w;x+=step){
-    const y = h/2 + synthSample(x, now)*40
-    if(x===0) eegCtx.moveTo(x,y)
-    else eegCtx.lineTo(x,y)
+  
+  function uid() { 
+    return Math.random().toString(36).slice(2, 10); 
   }
-  eegCtx.stroke()
-  requestAnimationFrame(drawEEG)
-}
-drawEEG()
 
-const perfCtx = document.getElementById('perfChart').getContext('2d')
-const bandCtx = document.getElementById('bandChart').getContext('2d')
-const perfChart = new Chart(perfCtx, {
-  type:'line',
-  data:{labels:[],datasets:[
-    {label:'Accuracy %',data:[],borderColor:'#22c55e',tension:0.3,yAxisID:'y'},
-    {label:'Avg RT (ms)',data:[],borderColor:'#f97316',tension:0.3,yAxisID:'rt'}
-  ]},
-  options:{scales:{y:{position:'left',min:0,max:100}, rt:{position:'right',grid:{display:false}}}}
-})
-const bandChart = new Chart(bandCtx, {
-  type:'line',
-  data:{labels:[],datasets:[
-    {label:'Delta',data:[],borderColor:'#7c3aed',tension:0.3},
-    {label:'Theta',data:[],borderColor:'#0ea5e9',tension:0.3},
-    {label:'Alpha',data:[],borderColor:'#22c55e',tension:0.3},
-    {label:'Beta',data:[],borderColor:'#f97316',tension:0.3},
-    {label:'Gamma',data:[],borderColor:'#ef4444',tension:0.3}
-  ]},
-  options:{plugins:{legend:{display:true}}}
-})
-function pushToCharts(session){
-  const m = computeSessionMetrics(session)
-  const label = new Date(session.created_at).toLocaleTimeString()
-  perfChart.data.labels.push(label)
-  perfChart.data.datasets[0].data.push(m.acc?Math.round(m.acc*100):0)
-  perfChart.data.datasets[1].data.push(m.avgRT?Math.round(m.avgRT):0)
-  if(perfChart.data.labels.length>40){ perfChart.data.labels.shift(); perfChart.data.datasets.forEach(d=>d.data.shift()) }
-  perfChart.update()
-  const bands = behaviorToBands({ meanRT: m.avgRT, accuracy: m.acc, rtStd: m.rtStd }, { baselineRT: parseInt(document.getElementById('baselineRT').value||600,10) })
-  bandChart.data.labels.push(label)
-  const keys=['delta','theta','alpha','beta','gamma']
-  keys.forEach((k,i)=> bandChart.data.datasets[i].data.push(bands[k]))
-  if(bandChart.data.labels.length>40){ bandChart.data.labels.shift(); bandChart.data.datasets.forEach(d=>d.data.shift()) }
-  bandChart.update()
-  setBands(bands)
-}
-
-/* -------------------------------
-   Reaction Session (works)
-   ------------------------------- */
-let running=false, currentTrials=[]
-document.getElementById('startSession').addEventListener('click', ()=> startSession(12))
-document.getElementById('stopSession').addEventListener('click', ()=> stopSession(true))
-document.getElementById('btnPlayBell').addEventListener('click', ()=> document.getElementById('bellAudio').play())
-document.getElementById('btnPlayBreath').addEventListener('click', ()=> document.getElementById('breathAudio').play())
-document.getElementById('btnShowReport').addEventListener('click', ()=> generateReport())
-
-function log(msg){ const el=document.getElementById('log'); el.innerText = new Date().toLocaleTimeString() + ' • ' + msg + '\n' + el.innerText }
-async function startSession(trialsCount=12){
-  if(running) return
-  ensureAudio()
-  running=true; currentTrials=[]; document.getElementById('sessionStatus').innerText='Running'
-  log('Session started: ' + trialsCount + ' trials')
-  const stimEl = document.getElementById('stim')
-  for(let i=0;i<trialsCount && running;i++){
-    const stim = Math.random() < 0.5 ? '🔴' : '🔵'
-    stimEl.innerText = stim; stimEl.style.transform='scale(1.04)'
-    const t0 = nowPerf()
-    let responded=false
-    function clickHandler(){ responded=true; const rt = Math.round(nowPerf() - t0); currentTrials.push({rt,stim,correct:true,t_perf:nowPerf(),t_epoch:tNow()}); window.removeEventListener('click', clickHandler); playClick(880,0.02); log('Response: ' + rt + 'ms') }
-    window.addEventListener('click', clickHandler)
-    await sleep(1800)
-    window.removeEventListener('click', clickHandler)
-    if(!responded){ currentTrials.push({rt:null,stim,correct:false,t_perf:nowPerf(),t_epoch:tNow()}); log('Missed') }
-    stimEl.style.transform='scale(1)'
-    await sleep(220 + Math.random()*240)
+  // Persistence: simple wrapper using localStorage
+  const S_KEY = 'neuro_sessions_v1';
+  
+  function loadSessions() { 
+    try { 
+      return JSON.parse(localStorage.getItem(S_KEY) || []; 
+    } catch(e) { 
+      return []; 
+    } 
   }
-  stopSession(false)
-}
-
-function stopSession(userStopped=false){
-  if(!running && !userStopped) return
-  running=false; document.getElementById('sessionStatus').innerText='Idle'
-  const session = { id: uid('s'), type:'reaction', trials: currentTrials.slice(), created_at: tNow() }
-  saveSession(session)
-  const m = computeSessionMetrics(session)
-  document.getElementById('lastAvgRT').innerText = m.avgRT?Math.round(m.avgRT):'—'
-  document.getElementById('lastAcc').innerText = m.acc?Math.round(m.acc*100)+'%':'—'
-  const baseline = parseInt(document.getElementById('baselineRT').value||600,10)
-  const engagement = m.avgRT ? ((baseline / m.avgRT) * (m.acc||0)).toFixed(3) : '—'
-  document.getElementById('lastEng').innerText = engagement
-  document.getElementById('numSessions').innerText = loadSessions().length
-  log('Session ended — saved: ' + session.id)
-  pushToCharts(session)
-}
-
-/* -------------------------------
-   Memory match & sequence
-   ------------------------------- */
-let memState={board:[],open:[],matches:0,moves:0,startedAt:0}
-document.getElementById('memStart').addEventListener('click', ()=> startMemory(8))
-document.getElementById('memShuffle').addEventListener('click', ()=> shuffleMemory())
-function startMemory(pairs=8){
-  const icons = ['🍎','🍊','🍇','🍉','🍓','🍒','🍍','🥝','🍋','🍑','🥑','🍌','🥥','🍐','🍈','🥭']
-  const pool = icons.slice(0,pairs)
-  const deck = shuffle([...pool,...pool])
-  memState.board = deck.map((v,i)=>({id:uid('c'), val:v, revealed:false, matched:false}))
-  memState.open=[]; memState.matches=0; memState.moves=0; memState.startedAt=tNow()
-  renderMemoryBoard()
-  log('Memory board started: ' + pairs + ' pairs')
-}
-function renderMemoryBoard(){
-  const board = document.getElementById('memBoard'); board.innerHTML=''
-  memState.board.forEach((card, idx)=>{
-    const el = document.createElement('div'); el.className='card-face'
-    el.innerText = card.revealed || card.matched ? card.val : '❔'
-    el.style.opacity = card.matched ? 0.5 : 1
-    el.onclick = ()=> onMemClick(idx)
-    board.appendChild(el)
-  })
-  document.getElementById('memMoves').innerText = memState.moves
-  document.getElementById('memMatches').innerText = memState.matches
-}
-function onMemClick(idx){
-  const card = memState.board[idx]
-  if(card.matched || memState.open.includes(idx) || memState.open.length>=2) return
-  memState.board[idx].revealed = true; memState.open.push(idx); renderMemoryBoard()
-  if(memState.open.length===2){
-    memState.moves++
-    const [a,b]=memState.open
-    if(memState.board[a].val === memState.board[b].val){
-      memState.board[a].matched = memState.board[b].matched = true
-      memState.matches++
-      playChime(); log('Matched: ' + memState.board[a].val)
-    } else {
-      playClick(320,0.02); log('Mismatch')
-      setTimeout(()=>{ memState.board[a].revealed = memState.board[b].revealed = false; renderMemoryBoard() }, 700)
-    }
-    memState.open = []
-    renderMemoryBoard()
+  
+  function saveSession(s) { 
+    const arr = loadSessions(); 
+    arr.unshift(s); 
+    localStorage.setItem(S_KEY, JSON.stringify(arr.slice(0, 500))); 
+    refreshUI(); 
   }
-}
-function shuffleMemory(){ if(!memState.board.length) return; memState.board = shuffle(memState.board); memState.open=[]; memState.moves=0; memState.matches=0; renderMemoryBoard(); log('Shuffled memory') }
-
-/* Sequence recall */
-document.getElementById('seqStart').addEventListener('click', ()=> startSequence(5))
-let seqState={sequence:[],userInput:[]}
-function startSequence(len=5){
-  const pool = ['A','B','C','D','E','F','G','H','I','J','K']
-  seqState.sequence = []
-  for(let i=0;i<len;i++) seqState.sequence.push(pool[Math.floor(Math.random()*pool.length)])
-  const disp = document.getElementById('seqDisplay'); disp.innerHTML = ''
-  seqState.sequence.forEach(s => { const el=document.createElement('div'); el.className='card-face'; el.style.background='#eef6ff'; el.style.color='#022'; el.innerText = s; disp.appendChild(el) })
-  setTimeout(()=>{ disp.innerHTML = '';
-    seqState.userInput = []
-    const opts = document.createElement('div'); opts.className='cards-grid'
-    const poolSet = Array.from(new Set([...seqState.sequence, ...Array.from({length:6},()=>String.fromCharCode(65+Math.floor(Math.random()*10)))]))
-    poolSet.forEach(ch => { const but=document.createElement('div'); but.className='card-face'; but.innerText=ch; but.onclick=()=> { seqState.userInput.push(ch); but.style.opacity=0.5 }; opts.appendChild(but) })
-    document.getElementById('seqDisplay').appendChild(opts)
-  }, 1500)
-}
-document.getElementById('seqSubmit').addEventListener('click', ()=> {
-  const ok = JSON.stringify(seqState.userInput) === JSON.stringify(seqState.sequence)
-  if(ok) { playChime(); log('Sequence correct') } else { playClick(320,0.02); log('Sequence wrong') }
-})
-
-/* -------------------------------
-   Visual-Spatial
-   ------------------------------- */
-document.getElementById('spatialStart').addEventListener('click', ()=> initSpatial())
-let spatialState={targets:[],shapes:[],placed:0}
-function initSpatial(){
-  spatialState.targets=[]; spatialState.shapes=[]; spatialState.placed=0
-  const colors=['#FFB703','#FB8500','#219EBC','#8ECAE6','#023047','#FF006E']
-  const shapes=['▢','▲','●','◆','★','⬟']
-  for(let i=0;i<3;i++){
-    spatialState.targets.push({id:uid('t'), color:colors[i], shape:shapes[i], filled:false})
-    spatialState.shapes.push({id:uid('s'), color:colors[i], shape:shapes[i], placed:false})
+  
+  function deleteSessionById(id) { 
+    let arr = loadSessions(); 
+    arr = arr.filter(x => x.id !== id); 
+    localStorage.setItem(S_KEY, JSON.stringify(arr)); 
+    refreshUI(); 
   }
-  renderSpatial()
-}
-function renderSpatial(){
-  const shapesEl = document.getElementById('shapes'); shapesEl.innerHTML=''
-  spatialState.shapes.forEach(s => {
-    const el = document.createElement('div'); el.className='shape'; el.draggable=true
-    el.style.background = s.color; el.innerText = s.shape; el.id = s.id
-    el.addEventListener('dragstart', e=> e.dataTransfer.setData('text/plain', s.id))
-    shapesEl.appendChild(el)
-  })
-  const targetRow = document.getElementById('targetRow'); targetRow.innerHTML=''
-  spatialState.targets.forEach(t => {
-    const tr = document.createElement('div'); tr.className='target'; tr.id = t.id; tr.innerText = t.shape
-    tr.addEventListener('dragover', e=> e.preventDefault())
-    tr.addEventListener('drop', e=>{
-      e.preventDefault()
-      const sid = e.dataTransfer.getData('text/plain')
-      const shapeObj = spatialState.shapes.find(x=>x.id===sid)
-      if(!shapeObj) return
-      if(shapeObj.shape === t.shape){
-        document.getElementById(sid).remove()
-        tr.style.background = shapeObj.color; tr.innerText = '✓'; shapeObj.placed=true; t.filled=true; spatialState.placed++
-        playChime(); log('Placed correctly: ' + shapeObj.shape)
-      } else {
-        playClick(320,0.02); log('Wrong placement')
+
+  function refreshUI() {
+    const sessions = loadSessions();
+    document.getElementById('numSessions').innerText = sessions.length;
+    
+    if(sessions.length) {
+      document.getElementById('lastType').innerText = sessions[0].type || '—';
+      const trials = sessions[0].trials || [];
+      
+      if(trials.length) {
+        const rtValues = trials.filter(t => t.rt != null).map(t => t.rt);
+        const mean = rtValues.length ? Math.round(rtValues.reduce((a, b) => a + b, 0) / rtValues.length) : 0;
+        const acc = Math.round(trials.filter(t => t.correct).length / trials.length * 100);
+        document.getElementById('lastAvgRT').innerText = String(mean);
+        document.getElementById('lastAcc').innerText = acc + '%';
       }
-      updateSpatialMetrics()
-    })
-    targetRow.appendChild(tr)
-  })
-  updateSpatialMetrics()
-}
-function updateSpatialMetrics(){
-  document.getElementById('placedCount').innerText = spatialState.placed
-  const total = spatialState.targets.length
-  const acc = total ? Math.round((spatialState.placed/total)*100) : 0
-  document.getElementById('spatialAcc').innerText = acc + '%'
-}
+    } else {
+      document.getElementById('lastType').innerText = '—'; 
+      document.getElementById('lastAvgRT').innerText = '—'; 
+      document.getElementById('lastAcc').innerText = '—';
+    }
 
-/* -------------------------------
-   Export / Import / Profile / XP
-   ------------------------------- */
-document.getElementById('btnExport').addEventListener('click', ()=>{
-  const data = loadSessions(); const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'})
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'neuro_sessions.json'; a.click()
-})
-document.getElementById('btnCSV').addEventListener('click', ()=>{
-  const arr = loadSessions(); let rows=[['session_id','type','created_at','idx','rt','correct','stim']]
-  arr.forEach(s=> (s.trials||[]).forEach((t,i)=> rows.push([s.id,s.type,new Date(s.created_at).toISOString(),i,(t.rt||''),(t.correct||''),(t.stim||'')])))
-  const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n'); const blob=new Blob([csv],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='neuro_sessions.csv'; a.click()
-})
-document.getElementById('btnImport').addEventListener('click', ()=> {
-  const inp = document.createElement('input'); inp.type='file'; inp.accept='.json'
-  inp.onchange = e=> { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = ev => {
-      try{ const parsed = JSON.parse(ev.target.result); if(Array.isArray(parsed)) { parsed.forEach(s=> saveSession(s)); alert('Imported ' + parsed.length + ' sessions') } else alert('JSON must be an array of sessions') }catch(err){ alert('Import failed: ' + err.message) } }; r.readAsText(f)
-  }; inp.click()
-})
+    // Fill session select
+    const sel = document.getElementById('sessionSelect');
+    sel.innerHTML = '<option value="">Select session</option>';
+    
+    sessions.forEach(s => {
+      const opt = document.createElement('option'); 
+      opt.value = s.id; 
+      opt.textContent = `${s.type} — ${new Date(s.created_at).toLocaleString()}`; 
+      sel.appendChild(opt);
+    });
+  }
 
-document.getElementById('btnCreateProfile').addEventListener('click', ()=>{
-  const name = document.getElementById('profileName').value.trim() || 'You'
-  let p = loadProfile(); if(!p){ p = createProfile(name) } else { p.name = name; saveProfile(p) }
-  alert('Profile selected: ' + p.name)
-})
-function loadProfile(){ try{ return JSON.parse(localStorage.getItem(P_KEY) || 'null') }catch(e){ return null} }
-function saveProfile(p){ localStorage.setItem(P_KEY, JSON.stringify(p)); refreshProfileUI() }
-function createProfile(name='You'){ const p={id:uid('u'),name,level:1,xp:0,xpToNext:100,streak:0,createdAt:tNow()}; saveProfile(p); return p }
-function refreshProfileUI(){ const p = loadProfile(); if(!p){ document.getElementById('userLevel').innerText='—'; document.getElementById('userXP').innerText='—'; return } document.getElementById('userLevel').innerText=p.level; document.getElementById('userXP').innerText=p.xp + ' / ' + (p.xpToNext||100) }
-function awardXP(xp){ let p = loadProfile(); if(!p) p = createProfile(document.getElementById('profileName').value || 'You'); p.xp = (p.xp||0) + xp; while(p.xp >= (p.xpToNext||100)){ p.xp -= (p.xpToNext||100); p.level = (p.level||1) + 1; p.xpToNext = Math.round((p.xpToNext||100) * 1.4); log('Level up! New level: ' + p.level); playChime() } saveProfile(p) }
+  // ---------- Reaction Game ----------
+  (function setupReaction() {
+    const stimEl = document.getElementById('reactionStim');
+    const startBtn = document.getElementById('reactionStart');
+    const stopBtn = document.getElementById('reactionStop');
+    const btnRed = document.getElementById('reactionRed');
+    const btnGreen = document.getElementById('reactionGreen');
+    const lastRT = document.getElementById('lastRT');
+    let running = false, trials = [], curStim = null, startPerf = null, timerId = null;
 
-/* -------------------------------
-   Reports
-   ------------------------------- */
-function generateReport(){
-  const sessions = loadSessions()
-  if(!sessions.length) return alert('No sessions yet')
-  const last = sessions[0]
-  const metrics = computeSessionMetrics(last)
-  const bands = behaviorToBands({ meanRT:metrics.avgRT, accuracy:metrics.acc, rtStd:metrics.rtStd }, { baselineRT: parseInt(document.getElementById('baselineRT').value||600,10) })
-  const report = { generatedAt: new Date().toISOString(), sessionId: last.id, sessionType: last.type, metrics, bands, formulaNote: 'Bands are behavior-derived estimates computed from meanRT, accuracy, and RT variance.' }
-  const win = window.open('', '_blank')
-  win.document.write('<pre style="white-space:pre-wrap;">' + JSON.stringify(report, null, 2) + '</pre>')
-}
+    function nextTrial() {
+      if(!running) return;
+      const count = parseInt(document.getElementById('reactionCount').value || '12', 10);
+      
+      if(trials.length >= count) { 
+        finish(); 
+        return; 
+      }
+      
+      // Set stimulus randomly
+      curStim = Math.random() < 0.5 ? 'red' : 'green';
+      stimEl.innerText = curStim === 'red' ? '🔴' : '🟢';
+      stimEl.classList.add('active-game');
+      startPerf = performance.now();
+      
+      // If user doesn't respond, allow trial timeout
+      timerId = setTimeout(() => {
+        trials.push({
+          rt: null, 
+          choice: null, 
+          stim: curStim, 
+          correct: false,
+          t_perf: performance.now(),
+          t_epoch: Date.now()
+        });
+        log('Missed a reaction trial');
+        nextTrial();
+      }, 2500);
+    }
+    
+    function finish() {
+      running = false; 
+      stimEl.innerText = '—'; 
+      stimEl.classList.remove('active-game');
+      stopBtn.style.display = 'none'; 
+      startBtn.style.display = '';
+      clearTimeout(timerId);
+      
+      const session = { 
+        id: uid(), 
+        type: 'reaction', 
+        trials: trials, 
+        created_at: Date.now() 
+      };
+      
+      saveSession(session);
+      log('Saved reaction session: ' + session.id);
+    }
+    
+    function handleTap(choice) {
+      if(!running || !startPerf) return;
+      clearTimeout(timerId);
+      
+      const rt = Math.round(performance.now() - startPerf);
+      const correct = (choice === curStim);
+      
+      trials.push({
+        rt, 
+        choice, 
+        stim: curStim, 
+        correct,
+        t_perf: performance.now(),
+        t_epoch: Date.now()
+      });
+      
+      lastRT.innerText = rt;
+      startPerf = null;
+      
+      // Visual feedback
+      if(correct) {
+        stimEl.classList.add('success-flash');
+        setTimeout(() => stimEl.classList.remove('success-flash'), 500);
+      } else {
+        stimEl.classList.add('error-flash');
+        setTimeout(() => stimEl.classList.remove('error-flash'), 500);
+      }
+      
+      // Small delay then next
+      setTimeout(nextTrial, 300 + Math.random() * 400);
+    }
 
-/* -------------------------------
-   Timer for meditation
-   ------------------------------- */
-let timerHandle = null
-function setTimer(seconds){
-  if(timerHandle){ clearInterval(timerHandle); timerHandle=null; document.getElementById('timerDisplay').innerText = 'Timer cleared'; return }
-  let left = seconds
-  document.getElementById('timerDisplay').innerText = `Timer: ${left}s`
-  timerHandle = setInterval(()=>{ left--; if(left<=0){ clearInterval(timerHandle); timerHandle=null; document.getElementById('timerDisplay').innerText='Done'; playChime(); } else document.getElementById('timerDisplay').innerText = `Timer: ${left}s` }, 1000)
-}
+    startBtn.addEventListener('click', () => {
+      running = true; 
+      trials = []; 
+      startBtn.style.display = 'none'; 
+      stopBtn.style.display = '';
+      log('Reaction session started');
+      nextTrial();
+    });
+    
+    stopBtn.addEventListener('click', () => { 
+      running = false; 
+      finish(); 
+    });
+    
+    btnRed.addEventListener('click', () => handleTap('red'));
+    btnGreen.addEventListener('click', () => handleTap('green'));
+  })();
 
-/* -------------------------------
-   Video helpers (open in new window)
-   ------------------------------- */
-function openVideo(url){
-  // open in a focused popup (same tab replacement)
-  window.location.href = url
-}
-function openVideoNew(url){
-  window.open(url, '_blank')
-}
+  // ---------- N-Back ----------
+  (function setupNBack() {
+    const startBtn = document.getElementById('nbackStart');
+    const stopBtn = document.getElementById('nbackStop');
+    const stimEl = document.getElementById('nbackStim');
+    const yesBtn = document.getElementById('nbackYes');
+    const noBtn = document.getElementById('nbackNo');
+    const curNEl = document.getElementById('nbackCurN');
+    let running = false, seq = [], trials = [], n = 2, trialsTarget = 20, startPerf = null, timerId = null;
 
-/* -------------------------------
-   UI init & helpers
-   ------------------------------- */
-function refreshUI(){
-  document.getElementById('numSessions').innerText = loadSessions().length
-  const rec = document.getElementById('recentList'); rec.innerHTML = ''
-  loadSessions().slice(0,6).forEach(s=>{ const d = document.createElement('div'); d.className='tiny muted'; d.innerHTML = `<strong>${s.type}</strong> • ${new Date(s.created_at).toLocaleString()}`; rec.appendChild(d) })
-  refreshProfileUI()
-}
-refreshUI()
+    function displayChar(ch) {
+      stimEl.innerText = ch;
+    }
 
-document.querySelectorAll('.tab').forEach(t=>{
-  t.addEventListener('click', ()=> {
-    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'))
-    t.classList.add('active')
-    const tab = t.getAttribute('data-tab')
-    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'))
-    document.getElementById('panel-' + tab).classList.add('active')
-  })
-})
+    function nextStim() {
+      if(!running) return;
+      if(seq.length >= trialsTarget) { 
+        finish(); 
+        return; 
+      }
+      
+      // Generate next item 0-7
+      const next = Math.floor(Math.random() * 8);
+      seq.push(next);
+      displayChar(next);
+      stimEl.classList.add('active-game');
+      startPerf = performance.now();
+      
+      // Allow 900ms display then brief blank
+      timerId = setTimeout(() => {
+        startPerf = null;
+        stimEl.classList.remove('active-game');
+        setTimeout(nextStim, 300);
+      }, 900);
+    }
 
-function sleep(ms){ return new Promise(r=>setTimeout(r, ms)) }
-function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]] } return a }
+    function finish() {
+      running = false; 
+      stopBtn.style.display = 'none'; 
+      startBtn.style.display = '';
+      stimEl.classList.remove('active-game');
+      
+      // Compute accuracy
+      const acc = trials.length ? trials.filter(t => t.correct).length / trials.length : 0;
+      const meanRT = trials.length ? Math.round(trials.reduce((a, b) => a + b.rt, 0) / trials.length) : null;
+      
+      const session = { 
+        id: uid(), 
+        type: 'nback', 
+        n: n, 
+        trials: trials, 
+        created_at: Date.now() 
+      };
+      
+      saveSession(session);
+      log('Saved NBack session: ' + session.id + ' accuracy: ' + (acc * 100).toFixed(1) + '%');
+      
+      // Adjust n adaptively
+      if(acc >= 0.85 && meanRT && meanRT < 600) { 
+        n = Math.min(5, n + 1); 
+        log('N increased to ' + n); 
+      }
+      if(acc <= 0.6) { 
+        n = Math.max(1, n - 1); 
+        log('N decreased to ' + n); 
+      }
+      
+      curNEl.innerText = String(n);
+    }
 
-/* -------------------------------
-   Small UX utilities
-   ------------------------------- */
-document.getElementById('btnHints').addEventListener('click', ()=> alert('Hint: Focus on the color or shape. Short breathing before test helps.'))
-document.getElementById('btnMute').addEventListener('click', ()=> { const b=document.getElementById('bellAudio'); b.muted = !b.muted; document.getElementById('btnMute').innerText = b.muted ? 'Unmute' : 'Toggle Sound' })
-document.getElementById('btnReset').addEventListener('click', ()=> { if(confirm('Clear stored sessions and profile?')){ localStorage.removeItem(S_KEY); localStorage.removeItem(P_KEY); location.reload() } })
-document.getElementById('btnReplayLast').addEventListener('click', ()=> { const s = loadSessions()[0]; if(!s) return alert('No session'); alert('Last session: ' + s.id + '\\nTrials: ' + (s.trials?.length||0)) })
+    startBtn.addEventListener('click', () => {
+      n = parseInt(document.getElementById('nbackStartN').value || '2', 10);
+      trialsTarget = parseInt(document.getElementById('nbackTrials').value || '20', 10);
+      seq = []; 
+      trials = []; 
+      running = true;
+      startBtn.style.display = 'none'; 
+      stopBtn.style.display = '';
+      curNEl.innerText = String(n);
+      log('NBack started with n=' + n);
+      nextStim();
+    });
+    
+    stopBtn.addEventListener('click', () => { 
+      running = false; 
+      finish(); 
+    });
 
-// simulate bands from latest session when button clicked
-document.getElementById('simBands').addEventListener('click', ()=> {
-  const s = loadSessions()[0]; if(!s) return alert('No sessions')
-  const m = computeSessionMetrics(s)
-  const bands = behaviorToBands({ meanRT:m.avgRT, accuracy:m.acc, rtStd:m.rtStd }, { baselineRT: parseInt(document.getElementById('baselineRT').value||600,10) })
-  setBands(bands); pushToCharts(s); alert('Bands computed and charts updated (behavior-derived).')
-})
-document.getElementById('clearBands').addEventListener('click', ()=> { bandChart.data.labels = []; bandChart.data.datasets.forEach(d=>d.data=[]); bandChart.update(); alert('Band timeline cleared') })
+    yesBtn.addEventListener('click', () => {
+      if(seq.length === 0) return;
+      const idx = seq.length - 1;
+      const isMatch = (idx - n >= 0) && (seq[idx] === seq[idx - n]);
+      const rt = startPerf ? Math.round(performance.now() - startPerf) : null;
+      
+      trials.push({
+        rt, 
+        response: 'yes', 
+        correct: isMatch, 
+        stim: seq[idx], 
+        t_perf: performance.now(), 
+        t_epoch: Date.now()
+      });
+      
+      log('NBack response: ' + (isMatch ? 'correct' : 'wrong'));
+    });
+    
+    noBtn.addEventListener('click', () => {
+      if(seq.length === 0) return;
+      const idx = seq.length - 1;
+      const isMatch = (idx - n >= 0) && (seq[idx] === seq[idx - n]);
+      const rt = startPerf ? Math.round(performance.now() - startPerf) : null;
+      const correct = !isMatch;
+      
+      trials.push({
+        rt, 
+        response: 'no', 
+        correct, 
+        stim: seq[idx], 
+        t_perf: performance.now(), 
+        t_epoch: Date.now()
+      });
+      
+      log('NBack response: ' + (correct ? 'correct' : 'wrong'));
+    });
+  })();
 
-/* final: ensure audio context on first user gesture (some browsers block otherwise) */
-window.addEventListener('click', ()=> { try{ if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume() }catch(e){} }, { once: true })
-</script>
+  // ---------- Dual Task ----------
+  (function setupDual() {
+    const startBtn = document.getElementById('dualStart');
+    const stopBtn = document.getElementById('dualStop');
+    const trialsInput = document.getElementById('dualTrials');
+    const symbolEl = document.getElementById('dualSymbol');
+    const mathEl = document.getElementById('dualMath');
+    const ansInput = document.getElementById('dualAnswer');
+    const submitBtn = document.getElementById('dualSubmit');
+    const lastRT = document.getElementById('dualLastRT');
+    let running = false, trials = [], curSymbol = null, curMath = null, startPerf = null, timerId = null;
+
+    function randSymbol() {
+      const symbols = ['★','▲','◆','●','■','♣','♥','☀'];
+      return symbols[Math.floor(Math.random() * symbols.length)];
+    }
+    
+    function randMath() {
+      const a = Math.floor(Math.random() * 9) + 1;
+      const b = Math.floor(Math.random() * 9) + 1;
+      const op = Math.random() < 0.5 ? '+' : '-';
+      const expr = `${a} ${op} ${b}`;
+      const value = op === '+' ? a + b : a - b;
+      return { expr, value };
+    }
+
+    function nextTrial() {
+      if(!running) return;
+      const max = parseInt(trialsInput.value || '12', 10);
+      
+      if(trials.length >= max) { 
+        finish(); 
+        return; 
+      }
+      
+      curSymbol = randSymbol(); 
+      symbolEl.innerText = curSymbol;
+      curMath = randMath(); 
+      mathEl.innerText = curMath.expr;
+      ansInput.value = '';
+      ansInput.focus();
+      symbolEl.classList.add('active-game');
+      startPerf = performance.now();
+      
+      // If no submit in 3s, auto push trial as miss
+      timerId = setTimeout(() => {
+        trials.push({
+          rt: null, 
+          mathAns: null, 
+          mathCorrect: false, 
+          symbol: curSymbol, 
+          t_perf: performance.now(), 
+          t_epoch: Date.now()
+        });
+        log('Dual trial missed');
+        nextTrial();
+      }, 3000);
+    }
+
+    function finish() {
+      running = false; 
+      stopBtn.style.display = 'none'; 
+      startBtn.style.display = '';
+      symbolEl.classList.remove('active-game');
+      clearTimeout(timerId);
+      
+      const session = { 
+        id: uid(), 
+        type: 'dual', 
+        trials, 
+        created_at: Date.now() 
+      };
+      
+      saveSession(session);
+      log('Saved dual session: ' + session.id);
+    }
+
+    startBtn.addEventListener('click', () => {
+      trials = []; 
+      running = true; 
+      startBtn.style.display = 'none'; 
+      stopBtn.style.display = '';
+      log('Dual-task session started');
+      nextTrial();
+    });
+    
+    stopBtn.addEventListener('click', () => finish());
+    
+    submitBtn.addEventListener('click', () => {
+      if(!running || !startPerf) return;
+      clearTimeout(timerId);
+      
+      const rt = Math.round(performance.now() - startPerf);
+      const answer = ansInput.value.trim();
+      const mathCorrect = String(curMath.value) === answer;
+      
+      trials.push({
+        rt, 
+        mathAns: answer, 
+        mathCorrect, 
+        symbol: curSymbol, 
+        t_perf: performance.now(), 
+        t_epoch: Date.now()
+      });
+      
+      lastRT.innerText = String(rt);
+      
+      // Visual feedback
+      if(mathCorrect) {
+        mathEl.classList.add('success-flash');
+        setTimeout(() => mathEl.classList.remove('success-flash'), 500);
+      } else {
+        mathEl.classList.add('error-flash');
+        setTimeout(() => mathEl.classList.remove('error-flash'), 500);
+      }
+      
+      setTimeout(nextTrial, 400 + Math.random() * 400);
+    });
+  })();
+
+  // ---------- EEG Simulator (behavior -> bands) ----------
+  function behaviorToBands(metrics, options = { scale: 5, rFactor: 1.6 }) {
+    // Map behaviour to relative band strengths
+    const { meanRT, accuracy = 1, rtStd = 0, impulsiveErrors = 0 } = metrics;
+    
+    // Baseline assumptions
+    const baseRT = 500; // ms (baseline)
+    const speedFactor = Math.max(0.01, (baseRT - meanRT) / baseRT);
+    const fatigueFactor = Math.max(0, (meanRT - baseRT) / baseRT);
+    const varFactor = Math.min(1, rtStd / 300);
+    const stressFactor = Math.min(1, impulsiveErrors / Math.max(1, (metrics.totalErrors || 1)));
+
+    // Compute raw band proxies
+    let beta = Math.max(0, speedFactor * (0.5 + 0.8 * accuracy) - 0.3 * varFactor + 0.2 * (1 - stressFactor));
+    let gamma = Math.max(0, speedFactor * (0.2 + 0.6 * accuracy) - 0.2 * varFactor);
+    let alpha = Math.max(0, 0.5 * (1 - speedFactor) * (0.6 + 0.4 * accuracy) - 0.1 * stressFactor);
+    let theta = Math.max(0, fatigueFactor * (0.4 + 0.6 * varFactor) + 0.2 * stressFactor);
+    let delta = Math.max(0, fatigueFactor * (0.2 + 0.4 * varFactor));
+
+    // Non-linear scaling
+    const rFactor = options.rFactor || 1.6;
+    beta = Math.pow(beta + 1e-6, rFactor);
+    gamma = Math.pow(gamma + 1e-6, rFactor);
+    alpha = Math.pow(alpha + 1e-6, rFactor);
+    theta = Math.pow(theta + 1e-6, rFactor);
+    delta = Math.pow(delta + 1e-6, rFactor);
+
+    // Normalize and scale
+    const norm = delta + theta + alpha + beta + gamma;
+    const scale = (options.scale || 5) / Math.max(4.0, norm);
+    
+    return {
+      delta: +(delta * scale).toFixed(4),
+      theta: +(theta * scale).toFixed(4),
+      alpha: +(alpha * scale).toFixed(4),
+      beta:  +(beta  * scale).toFixed(4),
+      gamma: +(gamma * scale).toFixed(4)
+    };
+  }
+
+  // Run simulation for latest session and plot
+  let bandsHistory = []; // array of {time, bands}
+  const bandsCtx = document.getElementById('bandsChart').getContext('2d');
+  const overviewCtx = document.getElementById('overviewChart').getContext('2d');
+  let bandsChart = null;
+  let overviewChart = null;
+
+  function initCharts() {
+    if (bandsChart) bandsChart.destroy();
+    if (overviewChart) overviewChart.destroy();
+    
+    bandsChart = new Chart(bandsCtx, { 
+      type: 'line', 
+      data: { labels: [], datasets: [] }, 
+      options: { 
+        responsive: true, 
+        maintainAspectRatio: false,
+        plugins: { 
+          legend: { display: true },
+          tooltip: {
+            mode: 'index',
+            intersect: false
+          }
+        },
+        scales: {
+          x: {
+            grid: {
+              color: 'rgba(255, 255, 255, 0.05)'
+            }
+          },
+          y: {
+            grid: {
+              color: 'rgba(255, 255, 255, 0.05)'
+            }
+          }
+        }
+      } 
+    });
+    
+    overviewChart = new Chart(overviewCtx, { 
+      type: 'bar', 
+      data: { 
+        labels: ['Delta', 'Theta', 'Alpha', 'Beta', 'Gamma'], 
+        datasets: [{ 
+          label: 'Band (last)', 
+          data: [0, 0, 0, 0, 0],
+          backgroundColor: [
+            'rgba(124, 58, 237, 0.7)',
+            'rgba(14, 165, 233, 0.7)',
+            'rgba(34, 197, 94, 0.7)',
+            'rgba(249, 115, 22, 0.7)',
+            'rgba(239, 68, 68, 0.7)'
+          ],
+          borderColor: [
+            'rgb(124, 58, 237)',
+            'rgb(14, 165, 233)',
+            'rgb(34, 197, 94)',
+            'rgb(249, 115, 22)',
+            'rgb(239, 68, 68)'
+          ],
+          borderWidth: 1
+        }] 
+      }, 
+      options: { 
+        indexAxis: 'y', 
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { 
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return `Value: ${context.raw.toFixed(4)}`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: {
+              color: 'rgba(255, 255, 255, 0.05)'
+            }
+          },
+          y: {
+            grid: {
+              color: 'rgba(255, 255, 255, 0.05)'
+            }
+          }
+        }
+      } 
+    });
+  }
+
+  function runSimulatorForSession(session) {
+    if(!session || !session.trials || session.trials.length === 0) { 
+      alert('No session data'); 
+      return; 
+    }
+    
+    // Build sliding windows of trials
+    const windowSize = Math.max(2, Math.round((parseInt(document.getElementById('simWindow').value || '2', 10)));
+    const trials = session.trials;
+    bandsHistory = [];
+    
+    for(let i = 0; i < trials.length; i += windowSize) {
+      const win = trials.slice(i, i + windowSize);
+      const rts = win.filter(t => t.rt != null).map(t => t.rt);
+      const meanRT = rts.length ? (rts.reduce((a, b) => a + b, 0) / rts.length) : 900;
+      const rtStd = rts.length ? Math.sqrt(rts.map(x => Math.pow(x - meanRT, 2)).reduce((a, b) => a + b, 0) / rts.length) : 0;
+      const correct = win.filter(t => t.correct).length / Math.max(1, win.length);
+      const impulsive = win.filter(t => t.choice && t.correct === false && t.rt && t.rt < 180).length;
+      const totalErr = win.filter(t => t.correct === false).length;
+      
+      const metrics = { 
+        meanRT, 
+        accuracy: correct, 
+        rtStd, 
+        impulsiveErrors: impulsive, 
+        totalErrors: totalErr 
+      };
+      
+      const bands = behaviorToBands(metrics, { 
+        scale: parseFloat(document.getElementById('simScale').value || '5'), 
+        rFactor: 1.6 
+      });
+      
+      bandsHistory.push({ t: i, metrics, bands });
+    }
+    
+    // Update UI
+    const last = bandsHistory[bandsHistory.length - 1];
+    
+    if(last) {
+      document.getElementById('valDelta').innerText = last.bands.delta.toFixed(4);
+      document.getElementById('valTheta').innerText = last.bands.theta.toFixed(4);
+      document.getElementById('valAlpha').innerText = last.bands.alpha.toFixed(4);
+      document.getElementById('valBeta').innerText = last.bands.beta.toFixed(4);
+      document.getElementById('valGamma').innerText = last.bands.gamma.toFixed(4);
+      
+      overviewChart.data.datasets[0].data = [
+        last.bands.delta,
+        last.bands.theta,
+        last.bands.alpha,
+        last.bands.beta,
+        last.bands.gamma
+      ];
+      
+      overviewChart.update();
+    }
+    
+    // Plot timeseries
+    const labels = bandsHistory.map((b, idx) => 'w' + (idx + 1));
+    const datasets = [
+      { label: 'Delta', data: bandsHistory.map(b => b.bands.delta), borderColor: "#7c3aed", tension: 0.2, fill: false },
+      { label: 'Theta', data: bandsHistory.map(b => b.bands.theta), borderColor: "#0ea5e9", tension: 0.2, fill: false },
+      { label: 'Alpha', data: bandsHistory.map(b => b.bands.alpha), borderColor: "#22c55e", tension: 0.2, fill: false },
+      { label: 'Beta',  data: bandsHistory.map(b => b.bands.beta),  borderColor: "#f97316", tension: 0.2, fill: false },
+      { label: 'Gamma', data: bandsHistory.map(b => b.bands.gamma), borderColor: "#ef4444", tension: 0.2, fill: false }
+    ];
+    
+    bandsChart.data.labels = labels;
+    bandsChart.data.datasets = datasets;
+    bandsChart.update();
+    
+    log('Ran EEG simulation for session: ' + session.id);
+  }
+
+  document.getElementById('runSim').addEventListener('click', () => {
+    const sessions = loadSessions();
+    if(!sessions.length) return alert('No sessions to simulate. Run a game first.');
+    runSimulatorForSession(sessions[0]);
+  });
+
+  // Replay last: run simulator for last session
+  document.getElementById('replayLast').addEventListener('click', () => {
+    const sessions = loadSessions();
+    if(!sessions.length) return alert('No sessions');
+    const s = sessions[0]; 
+    runSimulatorForSession(s);
+    log('Replayed last session simulation');
+  });
+
+  // ---------- Session view & export ----------
+  document.getElementById('viewSession').addEventListener('click', () => {
+    const id = document.getElementById('sessionSelect').value;
+    if(!id) return alert('Select a session');
+    
+    const sessions = loadSessions(); 
+    const s = sessions.find(x => x.id === id);
+    if(!s) return alert('Session not found');
+    
+    const details = document.getElementById('sessionDetails');
+    const trials = s.trials || [];
+    const rtValues = trials.filter(t => t.rt != null).map(t => t.rt);
+    const meanRT = rtValues.length ? Math.round(rtValues.reduce((a, b) => a + b, 0) / rtValues.length) : 0;
+    const acc = Math.round(trials.filter(t => t.correct).length / Math.max(1, trials.length) * 100);
+    
+    details.innerHTML = `
+      <div class="neuroapp-card">
+        <h4>Session: ${s.type} — ${new Date(s.created_at).toLocaleString()}</h4>
+        <div class="neuroapp-small">Trials: ${trials.length} • Mean RT: ${meanRT}ms • Accuracy: ${acc}%</div>
+        <pre style="margin-top:12px;background:rgba(0,0,0,0.2);padding:12px;border-radius:8px;overflow:auto;max-height:200px;color:var(--text);">
+${JSON.stringify(s, null, 2)}
+        </pre>
+      </div>
+    `;
+  });
+  
+  document.getElementById('downloadRaw').addEventListener('click', () => {
+    const id = document.getElementById('sessionSelect').value;
+    if(!id) return alert('Select a session');
+    
+    const sessions = loadSessions(); 
+    const s = sessions.find(x => x.id === id);
+    if(!s) return alert('Session not found');
+    
+    const blob = new Blob([JSON.stringify(s, null, 2)], {type: 'application/json'});
+    const a = document.createElement('a'); 
+    a.href = URL.createObjectURL(blob); 
+    a.download = `${s.type}_${s.id}.json`; 
+    a.click();
+    log(`Downloaded raw data for session: ${s.id}`);
+  });
+  
+  document.getElementById('deleteSession').addEventListener('click', () => {
+    const id = document.getElementById('sessionSelect').value;
+    if(!id) return alert('Select a session');
+    if(!confirm('Delete session?')) return;
+    
+    deleteSessionById(id); 
+    log('Deleted session ' + id);
+  });
+
+  // Export all sessions
+  document.getElementById('exportAll').addEventListener('click', () => {
+    const arr = loadSessions();
+    const blob = new Blob([JSON.stringify(arr, null, 2)], {type: 'application/json'});
+    const a = document.createElement('a'); 
+    a.href = URL.createObjectURL(blob); 
+    a.download = `neuro_sessions_${Date.now()}.json`; 
+    a.click();
+    log('Exported all sessions');
+  });
+
+  // Generate PDF report
+  document.getElementById('genReport').addEventListener('click', () => {
+    const sessions = loadSessions();
+    if(!sessions.length) return alert('No sessions to report');
+    
+    const s = sessions[0];
+    const win = window.open('', '_blank');
+    const html = `
+      <html>
+        <head>
+          <title>Report ${s.id}</title>
+          <style>
+            body { font-family: sans-serif; padding: 20px; }
+            h2 { color: #4361ee; }
+            pre { background: #f6fbff; padding: 10px; border-radius: 5px; }
+          </style>
+        </head>
+        <body>
+          <h2>NeuroApp Report — ${s.type}</h2>
+          <div><strong>When:</strong> ${new Date(s.created_at).toLocaleString()}</div>
+          <div><strong>Trials:</strong> ${s.trials.length}</div>
+          <pre>${JSON.stringify(s, null, 2)}</pre>
+        </body>
+      </html>`;
+    
+    win.document.write(html); 
+    win.document.close();
+    log('Generated report for session: ' + s.id);
+  });
+
+  // Tab navigation for NeuroApp
+  document.querySelectorAll('.neuroapp-tab').forEach(t => {
+    t.addEventListener('click', (ev) => {
+      document.querySelectorAll('.neuroapp-tab').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      
+      const tab = t.getAttribute('data-tab');
+      document.querySelectorAll('[id^="tab-"]').forEach(el => el.style.display = 'none');
+      
+      const el = document.getElementById('tab-' + tab);
+      if(el) el.style.display = 'block';
+      
+      // Initialize charts when EEG Simulator tab is opened
+      if(tab === 'eegsim' && !bandsChart) {
+        initCharts();
+      }
+    });
+  });
+
+  // Clear sessions
+  document.getElementById('clearSessions').addEventListener('click', () => { 
+    if(confirm('Clear all session data?')){ 
+      localStorage.removeItem(S_KEY); 
+      refreshUI(); 
+      log('Cleared all sessions'); 
+    } 
+  });
+
+  // Quick demo session generator
+  document.getElementById('startDemo').addEventListener('click', () => {
+    // Create simple reaction session with synthetic RTs
+    const trials = [];
+    
+    for(let i = 0; i < 12; i++){
+      const rt = 300 + Math.round(Math.random() * 400);
+      const correct = Math.random() > 0.15;
+      trials.push({
+        rt, 
+        choice: correct ? (Math.random() > 0.5 ? 'red' : 'green') : (Math.random() > 0.5 ? 'red' : 'green'), 
+        stim: (Math.random() > 0.5 ? 'red' : 'green'), 
+        correct,
+        t_perf: performance.now(),
+        t_epoch: Date.now()
+      });
+    }
+    
+    const s = { 
+      id: uid(), 
+      type: 'reaction-demo', 
+      trials, 
+      created_at: Date.now() 
+    };
+    
+    saveSession(s); 
+    log('Demo session created');
+  });
+
+  // On load
+  refreshUI();
+  log('NeuroApp module ready');
+
+  // Initialize the app
+  initCharts();
+  </script>
 </body>
 </html>
