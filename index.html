@@ -1,1407 +1,726 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NeuroApp | Cognitive Testing Suite</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    :root {
-      --primary: #4361ee;
-      --primary-light: #4895ef;
-      --secondary: #3f37c9;
-      --success: #4cc9f0;
-      --card-bg: rgba(15, 23, 42, 0.6);
-      --glass: rgba(255, 255, 255, 0.05);
-      --text: #e2e8f0;
-      --text-muted: #94a3b8;
-      --bg: #0f172a;
-      --border: rgba(0, 204, 255, 0.15);
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0A0F1A">
+    <title>NeuroMind Pro | Singularity Edition</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      padding: 20px;
-      min-height: 100vh;
-      background-image: 
-        radial-gradient(circle at 10% 20%, rgba(67, 97, 238, 0.1) 0%, transparent 20%),
-        radial-gradient(circle at 90% 80%, rgba(76, 201, 240, 0.1) 0%, transparent 20%),
-        linear-gradient(135deg, #0f172a, #1e293b);
-    }
-    
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    
-    header {
-      text-align: center;
-      padding: 20px 0 30px;
-      position: relative;
-    }
-    
-    header::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 200px;
-      height: 3px;
-      background: linear-gradient(90deg, transparent, var(--success), transparent);
-      border-radius: 3px;
-    }
-    
-    .logo {
-      font-size: 2.8rem;
-      font-weight: 800;
-      background: linear-gradient(90deg, var(--primary), var(--success));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      margin-bottom: 10px;
-      letter-spacing: 1px;
-    }
-    
-    .tagline {
-      font-size: 1.2rem;
-      color: var(--text-muted);
-      max-width: 600px;
-      margin: 0 auto;
-    }
-    
-    .neuroapp-container {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 20px;
-      background: rgba(30, 41, 59, 0.8);
-      border-radius: 20px;
-      border: 1px solid var(--border);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-      backdrop-filter: blur(10px);
-    }
-    
-    .neuroapp-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-    
-    .neuroapp-header h1 {
-      margin: 0;
-      font-size: 1.25rem;
-      color: var(--success);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    
-    .neuroapp-header h1 i {
-      font-size: 1.4rem;
-    }
-    
-    .neuroapp-grid {
-      display: grid;
-      grid-template-columns: 1fr 380px;
-      gap: 18px;
-      margin-top: 20px;
-    }
-    
-    .neuroapp-card {
-      background: var(--card-bg);
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 6px 20px rgba(11, 16, 29, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-    
-    .neuroapp-small {
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-    
-    .neuroapp-button {
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.3s;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    
-    .neuroapp-button:hover {
-      background: var(--primary-light);
-      transform: translateY(-2px);
-    }
-    
-    .neuroapp-button:active {
-      transform: translateY(0);
-    }
-    
-    .neuroapp-row {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-    
-    .neuroapp-pill {
-      padding: 6px 12px;
-      border-radius: 999px;
-      background: var(--glass);
-      font-weight: 600;
-      font-size: 13px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    
-    .neuroapp-game-area {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      margin-top: 12px;
-    }
-    
-    .neuroapp-stimulus {
-      height: 120px;
-      width: 100%;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 56px;
-      background: rgba(0, 0, 0, 0.2);
-      border: 2px solid var(--border);
-      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
-    }
-    
-    .neuroapp-controls {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      min-width: 200px;
-    }
-    
-    .neuroapp-tabs {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 12px;
-    }
-    
-    .neuroapp-tab {
-      padding: 10px 16px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      background: rgba(255, 255, 255, 0.05);
-      cursor: pointer;
-      transition: all 0.3s;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    
-    .neuroapp-tab:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-    
-    .neuroapp-tab.active {
-      background: linear-gradient(90deg, var(--primary), var(--secondary));
-      color: white;
-    }
-    
-    .neuroapp-label {
-      display: block;
-      font-weight: 600;
-      margin-top: 8px;
-      margin-bottom: 6px;
-      color: var(--text);
-    }
-    
-    .neuroapp-input {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      background: rgba(0, 0, 0, 0.2);
-      color: var(--text);
-      font-family: inherit;
-    }
-    
-    .neuroapp-input:focus {
-      outline: none;
-      border-color: var(--primary);
-    }
-    
-    .neuroapp-metrics-list {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    
-    .neuroapp-metric {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px;
-      background: rgba(0, 0, 0, 0.15);
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-    
-    .neuroapp-chart-wrap {
-      height: 220px;
-      width: 100%;
-    }
-    
-    .neuroapp-log {
-      height: 160px;
-      overflow: auto;
-      background: rgba(0, 0, 0, 0.3);
-      color: var(--text);
-      padding: 12px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-family: monospace;
-      line-height: 1.8;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-    
-    .neuroapp-flex-col {
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .neuroapp-export-row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    
-    .neuroapp-sequence-display {
-      font-size: 48px;
-      text-align: center;
-      margin: 20px 0;
-      color: var(--success);
-      min-height: 80px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .btn-danger {
-      background: #ef4444;
-    }
-    
-    .btn-danger:hover {
-      background: #dc2626;
-    }
-    
-    .btn-success {
-      background: #10b981;
-    }
-    
-    .btn-success:hover {
-      background: #059669;
-    }
-    
-    .btn-secondary {
-      background: #6b7280;
-    }
-    
-    .btn-secondary:hover {
-      background: #4b5563;
-    }
-    
-    .active-game {
-      animation: pulse 1.5s infinite;
-      border-color: var(--success);
-    }
-    
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(76, 201, 240, 0.4); }
-      70% { box-shadow: 0 0 0 10px rgba(76, 201, 240, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(76, 201, 240, 0); }
-    }
-    
-    .success-flash {
-      animation: successFlash 0.5s;
-    }
-    
-    @keyframes successFlash {
-      0% { background-color: rgba(16, 185, 129, 0.3); }
-      100% { background-color: transparent; }
-    }
-    
-    .error-flash {
-      animation: errorFlash 0.5s;
-    }
-    
-    @keyframes errorFlash {
-      0% { background-color: rgba(239, 68, 68, 0.3); }
-      100% { background-color: transparent; }
-    }
-    
-    footer {
-      text-align: center;
-      margin-top: 30px;
-      padding-top: 20px;
-      color: var(--text-muted);
-      font-size: 14px;
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
-    }
-    
-    @media (max-width: 980px) {
-      .neuroapp-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .neuroapp-game-area {
-        flex-direction: column;
-      }
-      
-      .neuroapp-header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-    }
-    
-    @media (max-width: 600px) {
-      .neuroapp-tabs {
-        overflow-x: auto;
-        padding-bottom: 10px;
-        flex-wrap: nowrap;
-        justify-content: flex-start;
-      }
-      
-      .neuroapp-tab {
-        flex-shrink: 0;
-      }
-    }
-  </style>
+    <!-- Third-party libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.150.1/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.2.1/dist/chart.umd.js"></script>
+
+    <!-- ======================================================================= -->
+    <!-- [ STYLES - Singularity Edition ]                                        -->
+    <!-- ======================================================================= -->
+    <style>
+        :root {
+            --primary: #805AD5; /* Purple */
+            --primary-light: #B794F4;
+            --secondary: #3182CE; /* Blue */
+            --success: #38A169; /* Green */
+            --warning: #D69E2E; /* Yellow */
+            --danger: #E53E3E;  /* Red */
+            --card-bg: rgba(10, 15, 26, 0.6);
+            --glass: rgba(255, 255, 255, 0.04);
+            --text: #E2E8F0;
+            --text-muted: #A0AEC0;
+            --bg: #0A0F1A; /* Very Dark Blue */
+            --border: rgba(255, 255, 255, 0.1);
+            /* Neurofeedback colors */
+            --ambiance-color: rgba(49, 130, 206, 0); /* Initial transparent */
+        }
+        html { font-size: 16px; scroll-behavior: smooth; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            background-image: radial-gradient(circle at 1% 1%, var(--ambiance-color) 0%, transparent 40%),
+                              radial-gradient(circle at 99% 99%, var(--ambiance-color) 0%, transparent 40%);
+            transition: background-image 2s linear;
+            overflow-x: hidden;
+        }
+        #app-root { max-width: 1800px; margin: 0 auto; padding: 1rem; }
+        
+        /* --- Core Layout & Components --- */
+        .app-loader { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; font-size: 1.25rem; color: var(--primary-light); text-align: center; }
+        .app-loader i { font-size: 3rem; margin-bottom: 1rem; animation: fa-spin 2s linear infinite; }
+        .loader-subtext { font-size: 0.9rem; color: var(--text-muted); margin-top: 1rem; max-width: 400px; }
+        header { text-align: center; padding: 1rem 0 2rem; }
+        .logo { font-size: 2.5rem; font-weight: 800; letter-spacing: 1px; background: linear-gradient(45deg, var(--primary-light), var(--secondary)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .nav-tabs { display: flex; justify-content: center; gap: 0.75rem; margin-top: 2rem; flex-wrap: wrap; }
+        .tab-btn { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 0.75rem 1.25rem; border-radius: 50px; cursor: pointer; transition: all 0.2s ease-in-out; display: flex; align-items: center; gap: 0.5rem; font-weight: 600; }
+        .tab-btn:hover { background: var(--glass); border-color: var(--primary-light); transform: translateY(-2px); }
+        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 5px 15px rgba(128, 90, 213, 0.2); }
+        .tab-content { display: none; animation: fadeIn 0.5s; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .page-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 1.5rem; }
+        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; backdrop-filter: blur(15px); }
+        .card-header { margin: -1.5rem -1.5rem 1.5rem -1.5rem; padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.1); border-radius: 12px 12px 0 0; }
+        .card-title { font-size: 1.25rem; color: var(--text); display: flex; align-items: center; gap: 0.75rem; }
+        .card-title i { color: var(--primary-light); }
+        .button { background: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-weight: 600; }
+        .button:hover { background: var(--primary-light); transform: translateY(-2px); }
+        .button.secondary { background: var(--secondary); }
+        .button.danger { background: var(--danger); }
+
+        /* --- AI Coach & Player --- */
+        #ai-coach-container { 
+            position: fixed; 
+            bottom: 20px; 
+            left: 20px; 
+            background: var(--card-bg); 
+            border-radius: 10px; 
+            padding: 1rem; 
+            border: 1px solid var(--border); 
+            max-width: 350px; 
+            z-index: 1000; 
+            display: flex; 
+            align-items: center; 
+            gap: 1rem; 
+            animation: slideInUp 0.5s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        @keyframes slideInUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+        #ai-coach-avatar { font-size: 2rem; color: var(--primary); }
+        #ai-coach-message { font-size: 0.9rem; font-style: italic; }
+        
+        #media-player-container { 
+            position: fixed; 
+            bottom: 20px; 
+            right: 20px; 
+            background: var(--card-bg); 
+            border-radius: 10px; 
+            padding: 1rem; 
+            border: 1px solid var(--border); 
+            max-width: 350px; 
+            z-index: 1000; 
+            animation: slideInUp 0.5s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        .player-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .player-btn {
+            background: var(--glass);
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .player-btn:hover {
+            background: var(--primary);
+            transform: scale(1.1);
+        }
+
+        /* --- NeuroApp Game Specific --- */
+        .neuro-game-container { max-width: 900px; margin: auto; text-align: center; }
+        .game-stimulus { min-height: 150px; display: flex; justify-content: center; align-items: center; font-size: 4rem; margin: 2rem 0; font-weight: bold; }
+        .game-stimulus.feedback-correct { color: var(--success); }
+        .game-stimulus.feedback-incorrect { color: var(--danger); animation: shake 0.5s; }
+        @keyframes shake { 10%, 90% { transform: translate3d(-2px, 0, 0); } 20%, 80% { transform: translate3d(4px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-6px, 0, 0); } 40%, 60% { transform: translate3d(6px, 0, 0); } }
+        .game-hud { display: flex; justify-content: space-around; padding: 1rem; background: var(--glass); border-radius: 8px; margin-bottom: 2rem; }
+        .hud-item { text-align: center; }
+        .hud-label { font-size: 0.8rem; color: var(--text-muted); }
+        .hud-value { font-size: 1.5rem; font-weight: bold; }
+
+        /* --- EEG 3D Visualizer --- */
+        #eeg-3d-container { height: 500px; position: relative; border-radius: 8px; overflow: hidden; background: #000; cursor: grab; }
+        #eeg-3d-container:active { cursor: grabbing; }
+
+        /* --- Progress Tab --- */
+        .progress-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; }
+        .radar-chart-container, .trend-chart-container { height: 400px; }
+        
+        /* --- Floating Coach Animations --- */
+        .coach-pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        /* --- Responsive Adjustments --- */
+        @media (max-width: 768px) {
+            #ai-coach-container, #media-player-container {
+                max-width: 280px;
+                padding: 0.75rem;
+                font-size: 0.85rem;
+            }
+            .player-controls {
+                gap: 0.3rem;
+            }
+            .player-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <div class="logo">NEUROAPP</div>
-      <div class="tagline">Advanced Cognitive Assessment & Enhancement Platform</div>
-    </header>
-    
-    <div class="neuroapp-container">
-      <div class="neuroapp-header">
-        <h1><i class="fas fa-brain"></i> NeuroApp — Cognitive Testing Suite</h1>
-        <div class="neuroapp-row">
-          <div class="neuroapp-pill"><i class="fas fa-database"></i> Local-only • No API keys</div>
-          <button id="exportAll" class="neuroapp-button"><i class="fas fa-file-export"></i> Export All Sessions</button>
+    <div id="app-root">
+        <div class="app-loader">
+            <i class="fas fa-brain"></i>
+            <div>Initializing NeuroMind Platform...</div>
+            <div class="loader-subtext" id="loader-status">Bootstrapping cognitive core...</div>
         </div>
-      </div>
-
-      <div class="neuroapp-tabs" id="mainTabs">
-        <div class="neuroapp-tab active" data-tab="home"><i class="fas fa-home"></i> Home</div>
-        <div class="neuroapp-tab" data-tab="reaction"><i class="fas fa-bolt"></i> Reaction</div>
-        <div class="neuroapp-tab" data-tab="nback"><i class="fas fa-memory"></i> N-Back</div>
-        <div class="neuroapp-tab" data-tab="dual"><i class="fas fa-tasks"></i> Dual-Task</div>
-        <div class="neuroapp-tab" data-tab="eegsim"><i class="fas fa-wave-square"></i> EEG Simulator</div>
-        <div class="neuroapp-tab" data-tab="insights"><i class="fas fa-chart-line"></i> Insights</div>
-      </div>
-
-      <div class="neuroapp-grid">
-        <div>
-          <!-- HOME -->
-          <div class="neuroapp-card" id="tab-home">
-            <h2 style="margin-top:0">Welcome to NeuroApp</h2>
-            <p class="neuroapp-small">This interactive module records millisecond-accurate interactions, calculates transparent derived "virtual-EEG" band estimates from behavior, and adapts difficulty based on your performance.</p>
-            <div class="neuroapp-metrics-list" style="margin-top:20px">
-              <div class="neuroapp-metric"><div><i class="fas fa-flask"></i> Features</div><div>Reaction, N-Back, Dual Task</div></div>
-              <div class="neuroapp-metric"><div><i class="fas fa-microchip"></i> Technology</div><div>Local Processing Only</div></div>
-              <div class="neuroapp-metric"><div><i class="fas fa-shield-alt"></i> Privacy</div><div>Your data never leaves your device</div></div>
-            </div>
-            <div style="margin-top:20px" class="neuroapp-row">
-              <button id="startDemo" class="neuroapp-button"><i class="fas fa-play-circle"></i> Run Quick Demo Session</button>
-              <button id="clearSessions" class="neuroapp-button btn-danger"><i class="fas fa-trash-alt"></i> Clear Data</button>
-            </div>
-          </div>
-
-          <!-- REACTION -->
-          <div class="neuroapp-card" id="tab-reaction" style="display:none;margin-top:12px">
-            <h3><i class="fas fa-bolt"></i> Reaction & Accuracy Game</h3>
-            <p class="neuroapp-small">Tap the matching color as fast as you can when the stimulus appears. Records RT, accuracy, and raw events.</p>
-            <div class="neuroapp-game-area">
-              <div class="neuroapp-stimulus" id="reactionStim">—</div>
-              <div class="neuroapp-controls">
-                <button id="reactionStart" class="neuroapp-button"><i class="fas fa-play"></i> Start Session (12 trials)</button>
-                <button id="reactionStop" class="neuroapp-button btn-danger" style="display:none"><i class="fas fa-stop"></i> Stop</button>
-                <label class="neuroapp-label">Trial count</label>
-                <input id="reactionCount" type="number" min="4" max="60" value="12" class="neuroapp-input" />
-              </div>
-            </div>
-            <div style="margin-top:12px" class="neuroapp-row">
-              <button id="reactionRed" class="neuroapp-button btn-danger"><i class="fas fa-circle"></i> Red</button>
-              <button id="reactionGreen" class="neuroapp-button btn-success"><i class="fas fa-circle"></i> Green</button>
-              <div style="margin-left:auto" class="neuroapp-small">Last RT: <span id="lastRT">—</span> ms</div>
-            </div>
-          </div>
-
-          <!-- N-BACK -->
-          <div class="neuroapp-card" id="tab-nback" style="display:none;margin-top:12px">
-            <h3><i class="fas fa-memory"></i> N-Back (working memory)</h3>
-            <p class="neuroapp-small">Remember the item n positions back. Adaptive n increases/decreases based on your performance.</p>
-            <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
-              <label class="neuroapp-label" style="margin:0">Start N</label>
-              <input id="nbackStartN" type="number" min="1" max="5" value="2" class="neuroapp-input" style="width:70px" />
-              <label class="neuroapp-label" style="margin:0">Trials</label>
-              <input id="nbackTrials" type="number" min="10" max="60" value="20" class="neuroapp-input" style="width:80px" />
-              <button id="nbackStart" class="neuroapp-button"><i class="fas fa-play"></i> Start</button>
-              <button id="nbackStop" class="neuroapp-button btn-danger" style="display:none"><i class="fas fa-stop"></i> Stop</button>
-            </div>
-
-            <div class="neuroapp-sequence-display" id="nbackStim">—</div>
-
-            <div style="margin-top:8px" class="neuroapp-row">
-              <button class="neuroapp-button btn-success" id="nbackYes"><i class="fas fa-check"></i> Match</button>
-              <button class="neuroapp-button btn-danger" id="nbackNo"><i class="fas fa-times"></i> Not Match</button>
-              <div style="margin-left:auto" class="neuroapp-small">Current n: <span id="nbackCurN">2</span></div>
-            </div>
-          </div>
-
-          <!-- DUAL TASK -->
-          <div class="neuroapp-card" id="tab-dual" style="display:none;margin-top:12px">
-            <h3><i class="fas fa-tasks"></i> Dual-Task (visual + arithmetic)</h3>
-            <p class="neuroapp-small">Remember the visual symbol while quickly solving a small math problem.</p>
-            <div class="neuroapp-row" style="align-items:center;flex-wrap:wrap;gap:12px">
-              <label class="neuroapp-label" style="margin:0">Trials</label>
-              <input id="dualTrials" type="number" min="6" max="40" value="12" class="neuroapp-input" style="width:80px" />
-              <button id="dualStart" class="neuroapp-button"><i class="fas fa-play"></i> Start</button>
-              <button id="dualStop" class="neuroapp-button btn-danger" style="display:none"><i class="fas fa-stop"></i> Stop</button>
-            </div>
-
-            <div style="margin-top:12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
-              <div style="flex:1">
-                <div class="neuroapp-stimulus" id="dualSymbol">—</div>
-              </div>
-              <div style="min-width:240px">
-                <div style="margin-bottom:8px"><strong>Math</strong></div>
-                <div class="neuroapp-card neuroapp-small" id="dualMath" style="padding:10px">—</div>
-                <input id="dualAnswer" type="text" class="neuroapp-input" placeholder="Type answer" style="margin-top:10px" />
-                <div style="margin-top:8px" class="neuroapp-row">
-                  <button id="dualSubmit" class="neuroapp-button"><i class="fas fa-paper-plane"></i> Submit</button>
-                  <div style="margin-left:auto" class="neuroapp-small">Last RT: <span id="dualLastRT">—</span></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- EEG SIMULATOR -->
-          <div class="neuroapp-card" id="tab-eegsim" style="display:none;margin-top:12px">
-            <h3><i class="fas fa-wave-square"></i> EEG Simulator (behavior → bands)</h3>
-            <p class="neuroapp-small">This transforms interaction metrics into EEG-like band values (delta/theta/alpha/beta/gamma).</p>
-
-            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-              <label class="neuroapp-label" style="margin:0">Window (sec)</label>
-              <input id="simWindow" type="number" min="1" max="10" value="2" class="neuroapp-input" style="width:80px" />
-              <label class="neuroapp-label" style="margin:0">Scale factor</label>
-              <input id="simScale" type="number" min="1" max="10" value="5" class="neuroapp-input" style="width:80px" />
-              <button id="runSim" class="neuroapp-button"><i class="fas fa-cogs"></i> Sim Latest Session</button>
-            </div>
-
-            <div style="margin-top:12px" class="neuroapp-grid" id="simGrid">
-              <div class="neuroapp-card">
-                <h4 style="margin-top:0">Band Estimates (latest window)</h4>
-                <div class="neuroapp-metrics-list" id="bandValues">
-                  <div class="neuroapp-metric"><div>Delta</div><div id="valDelta">—</div></div>
-                  <div class="neuroapp-metric"><div>Theta</div><div id="valTheta">—</div></div>
-                  <div class="neuroapp-metric"><div>Alpha</div><div id="valAlpha">—</div></div>
-                  <div class="neuroapp-metric"><div>Beta</div><div id="valBeta">—</div></div>
-                  <div class="neuroapp-metric"><div>Gamma</div><div id="valGamma">—</div></div>
-                </div>
-              </div>
-
-              <div class="neuroapp-card">
-                <h4 style="margin-top:0">Band Time Series</h4>
-                <div class="neuroapp-chart-wrap"><canvas id="bandsChart"></canvas></div>
-                <div style="margin-top:8px" class="neuroapp-small">You can re-run simulation for any saved session.</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- INSIGHTS -->
-          <div class="neuroapp-card" id="tab-insights" style="display:none;margin-top:12px">
-            <h3><i class="fas fa-chart-line"></i> Insights & History</h3>
-            <p class="neuroapp-small">View past sessions, derived metrics, and raw event export.</p>
-            <div class="neuroapp-row" style="margin-top:8px;gap:8px;flex-wrap:wrap">
-              <select id="sessionSelect" class="neuroapp-input" style="width:240px;flex:1"><option value="">Select session</option></select>
-              <button id="viewSession" class="neuroapp-button"><i class="fas fa-eye"></i> View</button>
-              <button id="downloadRaw" class="neuroapp-button btn-secondary"><i class="fas fa-download"></i> Download raw</button>
-              <button id="deleteSession" class="neuroapp-button btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>
-            </div>
-
-            <div style="margin-top:12px" id="sessionDetails"></div>
-          </div>
-        </div>
-
-        <!-- right column -->
-        <div>
-          <div class="neuroapp-card">
-            <h3 style="margin-top:0"><i class="fas fa-chart-bar"></i> Live Metrics</h3>
-            <div class="neuroapp-metrics-list" style="margin-top:8px">
-              <div class="neuroapp-metric"><div><i class="fas fa-database"></i> Sessions stored</div><div id="numSessions">0</div></div>
-              <div class="neuroapp-metric"><div><i class="fas fa-history"></i> Last session type</div><div id="lastType">—</div></div>
-              <div class="neuroapp-metric"><div><i class="fas fa-stopwatch"></i> Last avg RT (ms)</div><div id="lastAvgRT">—</div></div>
-              <div class="neuroapp-metric"><div><i class="fas fa-bullseye"></i> Last accuracy</div><div id="lastAcc">—</div></div>
-            </div>
-
-            <div style="margin-top:12px">
-              <h4 class="neuroapp-small"><i class="fas fa-terminal"></i> Activity Log</h4>
-              <div class="neuroapp-log" id="quickLog">System initialized at <span id="initTime"></span></div>
-            </div>
-          </div>
-
-          <div class="neuroapp-card" style="margin-top:12px">
-            <h3 style="margin-top:0"><i class="fas fa-chart-pie"></i> Band Overview</h3>
-            <div class="neuroapp-chart-wrap"><canvas id="overviewChart"></canvas></div>
-            <div style="margin-top:8px" class="neuroapp-small">Overview of most recent simulation run.</div>
-          </div>
-
-          <div class="neuroapp-card" style="margin-top:12px">
-            <h3 style="margin-top:0"><i class="fas fa-cog"></i> Session Actions</h3>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
-              <button id="replayLast" class="neuroapp-button"><i class="fas fa-redo"></i> Replay Last Session</button>
-              <button id="genReport" class="neuroapp-button btn-success"><i class="fas fa-file-pdf"></i> Generate Report</button>
-            </div>
-            <div style="margin-top:12px" class="neuroapp-small">Reports contain raw events & computed metrics.</div>
-          </div>
-        </div>
-      </div>
     </div>
     
-    <footer>
-      <p>© 2023 NeuroApp - Cognitive Testing Suite</p>
-      <p style="margin-top:10px;">Powered by Neuroscience & AI | Your data is always secure and private</p>
-    </footer>
-  </div>
-  
-  <script>
-  // Initialize time
-  document.getElementById('initTime').textContent = new Date().toLocaleTimeString();
-  
-  // ---------- Utilities ----------
-  function log(msg) { 
-    const el = document.getElementById('quickLog'); 
-    el.innerHTML = `<span class="log-time">${new Date().toLocaleTimeString()}</span> — ${msg}<br>${el.innerHTML}`; 
-  }
-  
-  function uid() { 
-    return Math.random().toString(36).slice(2, 10); 
-  }
-
-  // Persistence: simple wrapper using localStorage
-  const S_KEY = 'neuro_sessions_v1';
-  
-  function loadSessions() { 
-    try { 
-      return JSON.parse(localStorage.getItem(S_KEY) || []; 
-    } catch(e) { 
-      return []; 
-    } 
-  }
-  
-  function saveSession(s) { 
-    const arr = loadSessions(); 
-    arr.unshift(s); 
-    localStorage.setItem(S_KEY, JSON.stringify(arr.slice(0, 500))); 
-    refreshUI(); 
-  }
-  
-  function deleteSessionById(id) { 
-    let arr = loadSessions(); 
-    arr = arr.filter(x => x.id !== id); 
-    localStorage.setItem(S_KEY, JSON.stringify(arr)); 
-    refreshUI(); 
-  }
-
-  function refreshUI() {
-    const sessions = loadSessions();
-    document.getElementById('numSessions').innerText = sessions.length;
+    <div id="ai-coach-container" style="display: none;">
+        <i id="ai-coach-avatar" class="fas fa-robot coach-pulse"></i>
+        <p id="ai-coach-message"></p>
+    </div>
     
-    if(sessions.length) {
-      document.getElementById('lastType').innerText = sessions[0].type || '—';
-      const trials = sessions[0].trials || [];
-      
-      if(trials.length) {
-        const rtValues = trials.filter(t => t.rt != null).map(t => t.rt);
-        const mean = rtValues.length ? Math.round(rtValues.reduce((a, b) => a + b, 0) / rtValues.length) : 0;
-        const acc = Math.round(trials.filter(t => t.correct).length / trials.length * 100);
-        document.getElementById('lastAvgRT').innerText = String(mean);
-        document.getElementById('lastAcc').innerText = acc + '%';
-      }
-    } else {
-      document.getElementById('lastType').innerText = '—'; 
-      document.getElementById('lastAvgRT').innerText = '—'; 
-      document.getElementById('lastAcc').innerText = '—';
-    }
+    <div id="media-player-container" style="display: none;">
+        <div class="card-title"><i class="fas fa-music"></i> Meditation Player</div>
+        <div id="player-title">Ocean Waves Meditation</div>
+        <div class="player-controls">
+            <button class="player-btn" id="player-prev"><i class="fas fa-step-backward"></i></button>
+            <button class="player-btn" id="player-play"><i class="fas fa-play"></i></button>
+            <button class="player-btn" id="player-next"><i class="fas fa-step-forward"></i></button>
+            <button class="player-btn" id="player-vol"><i class="fas fa-volume-up"></i></button>
+        </div>
+    </div>
 
-    // Fill session select
-    const sel = document.getElementById('sessionSelect');
-    sel.innerHTML = '<option value="">Select session</option>';
-    
-    sessions.forEach(s => {
-      const opt = document.createElement('option'); 
-      opt.value = s.id; 
-      opt.textContent = `${s.type} — ${new Date(s.created_at).toLocaleString()}`; 
-      sel.appendChild(opt);
-    });
-  }
+    <!-- ======================================================================= -->
+    <!-- [ JAVASCRIPT LOGIC - Singularity Edition ]                              -->
+    <!-- ======================================================================= -->
+    <script type="module">
+        // --- [ EMBEDDED ASSETS & CONFIGURATION ] ---
+        const ASSETS = {
+            // Embedded UI Sound Effects
+            SOUND_CLICK_B64: 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA',
+            SOUND_SUCCESS_B64: 'data:audio/wav;base64,UklGRlIAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhSAAAAEAAAAB1AAAAgwAAAJQAAACzAAAAtgAAALMAAACsAAAAqAAAAJkAAACNAAAAhwAAAGwAAABWAAAAQwAAACoAAAAgAAAAEwAAAAcAAAADAAAAAQAAAAE=',
+            // Embedded Meditation Audio
+            MEDITATION_OCEAN_B64: 'https://assets.mixkit.co/active_storage/sfx/250/250-preview.mp3',
+            MEDITATION_FOREST_B64: 'https://assets.mixkit.co/active_storage/sfx/243/243-preview.mp3',
+            MEDITATION_RAIN_B64: 'https://assets.mixkit.co/active_storage/sfx/240/240-preview.mp3'
+        };
 
-  // ---------- Reaction Game ----------
-  (function setupReaction() {
-    const stimEl = document.getElementById('reactionStim');
-    const startBtn = document.getElementById('reactionStart');
-    const stopBtn = document.getElementById('reactionStop');
-    const btnRed = document.getElementById('reactionRed');
-    const btnGreen = document.getElementById('reactionGreen');
-    const lastRT = document.getElementById('lastRT');
-    let running = false, trials = [], curStim = null, startPerf = null, timerId = null;
-
-    function nextTrial() {
-      if(!running) return;
-      const count = parseInt(document.getElementById('reactionCount').value || '12', 10);
-      
-      if(trials.length >= count) { 
-        finish(); 
-        return; 
-      }
-      
-      // Set stimulus randomly
-      curStim = Math.random() < 0.5 ? 'red' : 'green';
-      stimEl.innerText = curStim === 'red' ? '🔴' : '🟢';
-      stimEl.classList.add('active-game');
-      startPerf = performance.now();
-      
-      // If user doesn't respond, allow trial timeout
-      timerId = setTimeout(() => {
-        trials.push({
-          rt: null, 
-          choice: null, 
-          stim: curStim, 
-          correct: false,
-          t_perf: performance.now(),
-          t_epoch: Date.now()
-        });
-        log('Missed a reaction trial');
-        nextTrial();
-      }, 2500);
-    }
-    
-    function finish() {
-      running = false; 
-      stimEl.innerText = '—'; 
-      stimEl.classList.remove('active-game');
-      stopBtn.style.display = 'none'; 
-      startBtn.style.display = '';
-      clearTimeout(timerId);
-      
-      const session = { 
-        id: uid(), 
-        type: 'reaction', 
-        trials: trials, 
-        created_at: Date.now() 
-      };
-      
-      saveSession(session);
-      log('Saved reaction session: ' + session.id);
-    }
-    
-    function handleTap(choice) {
-      if(!running || !startPerf) return;
-      clearTimeout(timerId);
-      
-      const rt = Math.round(performance.now() - startPerf);
-      const correct = (choice === curStim);
-      
-      trials.push({
-        rt, 
-        choice, 
-        stim: curStim, 
-        correct,
-        t_perf: performance.now(),
-        t_epoch: Date.now()
-      });
-      
-      lastRT.innerText = rt;
-      startPerf = null;
-      
-      // Visual feedback
-      if(correct) {
-        stimEl.classList.add('success-flash');
-        setTimeout(() => stimEl.classList.remove('success-flash'), 500);
-      } else {
-        stimEl.classList.add('error-flash');
-        setTimeout(() => stimEl.classList.remove('error-flash'), 500);
-      }
-      
-      // Small delay then next
-      setTimeout(nextTrial, 300 + Math.random() * 400);
-    }
-
-    startBtn.addEventListener('click', () => {
-      running = true; 
-      trials = []; 
-      startBtn.style.display = 'none'; 
-      stopBtn.style.display = '';
-      log('Reaction session started');
-      nextTrial();
-    });
-    
-    stopBtn.addEventListener('click', () => { 
-      running = false; 
-      finish(); 
-    });
-    
-    btnRed.addEventListener('click', () => handleTap('red'));
-    btnGreen.addEventListener('click', () => handleTap('green'));
-  })();
-
-  // ---------- N-Back ----------
-  (function setupNBack() {
-    const startBtn = document.getElementById('nbackStart');
-    const stopBtn = document.getElementById('nbackStop');
-    const stimEl = document.getElementById('nbackStim');
-    const yesBtn = document.getElementById('nbackYes');
-    const noBtn = document.getElementById('nbackNo');
-    const curNEl = document.getElementById('nbackCurN');
-    let running = false, seq = [], trials = [], n = 2, trialsTarget = 20, startPerf = null, timerId = null;
-
-    function displayChar(ch) {
-      stimEl.innerText = ch;
-    }
-
-    function nextStim() {
-      if(!running) return;
-      if(seq.length >= trialsTarget) { 
-        finish(); 
-        return; 
-      }
-      
-      // Generate next item 0-7
-      const next = Math.floor(Math.random() * 8);
-      seq.push(next);
-      displayChar(next);
-      stimEl.classList.add('active-game');
-      startPerf = performance.now();
-      
-      // Allow 900ms display then brief blank
-      timerId = setTimeout(() => {
-        startPerf = null;
-        stimEl.classList.remove('active-game');
-        setTimeout(nextStim, 300);
-      }, 900);
-    }
-
-    function finish() {
-      running = false; 
-      stopBtn.style.display = 'none'; 
-      startBtn.style.display = '';
-      stimEl.classList.remove('active-game');
-      
-      // Compute accuracy
-      const acc = trials.length ? trials.filter(t => t.correct).length / trials.length : 0;
-      const meanRT = trials.length ? Math.round(trials.reduce((a, b) => a + b.rt, 0) / trials.length) : null;
-      
-      const session = { 
-        id: uid(), 
-        type: 'nback', 
-        n: n, 
-        trials: trials, 
-        created_at: Date.now() 
-      };
-      
-      saveSession(session);
-      log('Saved NBack session: ' + session.id + ' accuracy: ' + (acc * 100).toFixed(1) + '%');
-      
-      // Adjust n adaptively
-      if(acc >= 0.85 && meanRT && meanRT < 600) { 
-        n = Math.min(5, n + 1); 
-        log('N increased to ' + n); 
-      }
-      if(acc <= 0.6) { 
-        n = Math.max(1, n - 1); 
-        log('N decreased to ' + n); 
-      }
-      
-      curNEl.innerText = String(n);
-    }
-
-    startBtn.addEventListener('click', () => {
-      n = parseInt(document.getElementById('nbackStartN').value || '2', 10);
-      trialsTarget = parseInt(document.getElementById('nbackTrials').value || '20', 10);
-      seq = []; 
-      trials = []; 
-      running = true;
-      startBtn.style.display = 'none'; 
-      stopBtn.style.display = '';
-      curNEl.innerText = String(n);
-      log('NBack started with n=' + n);
-      nextStim();
-    });
-    
-    stopBtn.addEventListener('click', () => { 
-      running = false; 
-      finish(); 
-    });
-
-    yesBtn.addEventListener('click', () => {
-      if(seq.length === 0) return;
-      const idx = seq.length - 1;
-      const isMatch = (idx - n >= 0) && (seq[idx] === seq[idx - n]);
-      const rt = startPerf ? Math.round(performance.now() - startPerf) : null;
-      
-      trials.push({
-        rt, 
-        response: 'yes', 
-        correct: isMatch, 
-        stim: seq[idx], 
-        t_perf: performance.now(), 
-        t_epoch: Date.now()
-      });
-      
-      log('NBack response: ' + (isMatch ? 'correct' : 'wrong'));
-    });
-    
-    noBtn.addEventListener('click', () => {
-      if(seq.length === 0) return;
-      const idx = seq.length - 1;
-      const isMatch = (idx - n >= 0) && (seq[idx] === seq[idx - n]);
-      const rt = startPerf ? Math.round(performance.now() - startPerf) : null;
-      const correct = !isMatch;
-      
-      trials.push({
-        rt, 
-        response: 'no', 
-        correct, 
-        stim: seq[idx], 
-        t_perf: performance.now(), 
-        t_epoch: Date.now()
-      });
-      
-      log('NBack response: ' + (correct ? 'correct' : 'wrong'));
-    });
-  })();
-
-  // ---------- Dual Task ----------
-  (function setupDual() {
-    const startBtn = document.getElementById('dualStart');
-    const stopBtn = document.getElementById('dualStop');
-    const trialsInput = document.getElementById('dualTrials');
-    const symbolEl = document.getElementById('dualSymbol');
-    const mathEl = document.getElementById('dualMath');
-    const ansInput = document.getElementById('dualAnswer');
-    const submitBtn = document.getElementById('dualSubmit');
-    const lastRT = document.getElementById('dualLastRT');
-    let running = false, trials = [], curSymbol = null, curMath = null, startPerf = null, timerId = null;
-
-    function randSymbol() {
-      const symbols = ['★','▲','◆','●','■','♣','♥','☀'];
-      return symbols[Math.floor(Math.random() * symbols.length)];
-    }
-    
-    function randMath() {
-      const a = Math.floor(Math.random() * 9) + 1;
-      const b = Math.floor(Math.random() * 9) + 1;
-      const op = Math.random() < 0.5 ? '+' : '-';
-      const expr = `${a} ${op} ${b}`;
-      const value = op === '+' ? a + b : a - b;
-      return { expr, value };
-    }
-
-    function nextTrial() {
-      if(!running) return;
-      const max = parseInt(trialsInput.value || '12', 10);
-      
-      if(trials.length >= max) { 
-        finish(); 
-        return; 
-      }
-      
-      curSymbol = randSymbol(); 
-      symbolEl.innerText = curSymbol;
-      curMath = randMath(); 
-      mathEl.innerText = curMath.expr;
-      ansInput.value = '';
-      ansInput.focus();
-      symbolEl.classList.add('active-game');
-      startPerf = performance.now();
-      
-      // If no submit in 3s, auto push trial as miss
-      timerId = setTimeout(() => {
-        trials.push({
-          rt: null, 
-          mathAns: null, 
-          mathCorrect: false, 
-          symbol: curSymbol, 
-          t_perf: performance.now(), 
-          t_epoch: Date.now()
-        });
-        log('Dual trial missed');
-        nextTrial();
-      }, 3000);
-    }
-
-    function finish() {
-      running = false; 
-      stopBtn.style.display = 'none'; 
-      startBtn.style.display = '';
-      symbolEl.classList.remove('active-game');
-      clearTimeout(timerId);
-      
-      const session = { 
-        id: uid(), 
-        type: 'dual', 
-        trials, 
-        created_at: Date.now() 
-      };
-      
-      saveSession(session);
-      log('Saved dual session: ' + session.id);
-    }
-
-    startBtn.addEventListener('click', () => {
-      trials = []; 
-      running = true; 
-      startBtn.style.display = 'none'; 
-      stopBtn.style.display = '';
-      log('Dual-task session started');
-      nextTrial();
-    });
-    
-    stopBtn.addEventListener('click', () => finish());
-    
-    submitBtn.addEventListener('click', () => {
-      if(!running || !startPerf) return;
-      clearTimeout(timerId);
-      
-      const rt = Math.round(performance.now() - startPerf);
-      const answer = ansInput.value.trim();
-      const mathCorrect = String(curMath.value) === answer;
-      
-      trials.push({
-        rt, 
-        mathAns: answer, 
-        mathCorrect, 
-        symbol: curSymbol, 
-        t_perf: performance.now(), 
-        t_epoch: Date.now()
-      });
-      
-      lastRT.innerText = String(rt);
-      
-      // Visual feedback
-      if(mathCorrect) {
-        mathEl.classList.add('success-flash');
-        setTimeout(() => mathEl.classList.remove('success-flash'), 500);
-      } else {
-        mathEl.classList.add('error-flash');
-        setTimeout(() => mathEl.classList.remove('error-flash'), 500);
-      }
-      
-      setTimeout(nextTrial, 400 + Math.random() * 400);
-    });
-  })();
-
-  // ---------- EEG Simulator (behavior -> bands) ----------
-  function behaviorToBands(metrics, options = { scale: 5, rFactor: 1.6 }) {
-    // Map behaviour to relative band strengths
-    const { meanRT, accuracy = 1, rtStd = 0, impulsiveErrors = 0 } = metrics;
-    
-    // Baseline assumptions
-    const baseRT = 500; // ms (baseline)
-    const speedFactor = Math.max(0.01, (baseRT - meanRT) / baseRT);
-    const fatigueFactor = Math.max(0, (meanRT - baseRT) / baseRT);
-    const varFactor = Math.min(1, rtStd / 300);
-    const stressFactor = Math.min(1, impulsiveErrors / Math.max(1, (metrics.totalErrors || 1)));
-
-    // Compute raw band proxies
-    let beta = Math.max(0, speedFactor * (0.5 + 0.8 * accuracy) - 0.3 * varFactor + 0.2 * (1 - stressFactor));
-    let gamma = Math.max(0, speedFactor * (0.2 + 0.6 * accuracy) - 0.2 * varFactor);
-    let alpha = Math.max(0, 0.5 * (1 - speedFactor) * (0.6 + 0.4 * accuracy) - 0.1 * stressFactor);
-    let theta = Math.max(0, fatigueFactor * (0.4 + 0.6 * varFactor) + 0.2 * stressFactor);
-    let delta = Math.max(0, fatigueFactor * (0.2 + 0.4 * varFactor));
-
-    // Non-linear scaling
-    const rFactor = options.rFactor || 1.6;
-    beta = Math.pow(beta + 1e-6, rFactor);
-    gamma = Math.pow(gamma + 1e-6, rFactor);
-    alpha = Math.pow(alpha + 1e-6, rFactor);
-    theta = Math.pow(theta + 1e-6, rFactor);
-    delta = Math.pow(delta + 1e-6, rFactor);
-
-    // Normalize and scale
-    const norm = delta + theta + alpha + beta + gamma;
-    const scale = (options.scale || 5) / Math.max(4.0, norm);
-    
-    return {
-      delta: +(delta * scale).toFixed(4),
-      theta: +(theta * scale).toFixed(4),
-      alpha: +(alpha * scale).toFixed(4),
-      beta:  +(beta  * scale).toFixed(4),
-      gamma: +(gamma * scale).toFixed(4)
-    };
-  }
-
-  // Run simulation for latest session and plot
-  let bandsHistory = []; // array of {time, bands}
-  const bandsCtx = document.getElementById('bandsChart').getContext('2d');
-  const overviewCtx = document.getElementById('overviewChart').getContext('2d');
-  let bandsChart = null;
-  let overviewChart = null;
-
-  function initCharts() {
-    if (bandsChart) bandsChart.destroy();
-    if (overviewChart) overviewChart.destroy();
-    
-    bandsChart = new Chart(bandsCtx, { 
-      type: 'line', 
-      data: { labels: [], datasets: [] }, 
-      options: { 
-        responsive: true, 
-        maintainAspectRatio: false,
-        plugins: { 
-          legend: { display: true },
-          tooltip: {
-            mode: 'index',
-            intersect: false
-          }
-        },
-        scales: {
-          x: {
-            grid: {
-              color: 'rgba(255, 255, 255, 0.05)'
+        // --- [ UTILITY MODULE ] ---
+        const Utils = {
+            uid: () => Date.now().toString(36) + Math.random().toString(36).substr(2, 5),
+            log: (message) => console.log(`[NeuroMind] ${message}`),
+            calculateStdDev: (arr) => {
+                const n = arr.length;
+                if (n === 0) return 0;
+                const mean = arr.reduce((a, b) => a + b) / n;
+                return Math.sqrt(arr.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n);
             }
-          },
-          y: {
-            grid: {
-              color: 'rgba(255, 255, 255, 0.05)'
+        };
+        
+        // --- [ AUDIO CONTROLLER MODULE ] ---
+        class AudioController {
+            constructor() {
+                this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                this.ambianceGain = this.audioContext.createGain();
+                this.ambianceGain.gain.value = 0.1;
+                this.ambianceGain.connect(this.audioContext.destination);
+                
+                this.binauralOsc1 = null;
+                this.binauralOsc2 = null;
+                this.activeSound = null;
+                this.meditationTracks = [
+                    { title: "Ocean Waves", src: ASSETS.MEDITATION_OCEAN_B64 },
+                    { title: "Forest Ambience", src: ASSETS.MEDITATION_FOREST_B64 },
+                    { title: "Gentle Rain", src: ASSETS.MEDITATION_RAIN_B64 }
+                ];
+                this.currentTrackIndex = 0;
+                this.isPlaying = false;
+                Utils.log("Audio Controller Initialized.");
             }
-          }
+            
+            playSound(base64) {
+                const sound = new Audio(base64);
+                sound.play();
+            }
+
+            playBinauralBeat(baseFreq, beatFreq) {
+                if (this.binauralOsc1) {
+                    this.binauralOsc1.stop();
+                    this.binauralOsc2.stop();
+                }
+                this.binauralOsc1 = this.audioContext.createOscillator();
+                this.binauralOsc2 = this.audioContext.createOscillator();
+                this.binauralOsc1.type = 'sine';
+                this.binauralOsc2.type = 'sine';
+                this.binauralOsc1.frequency.setValueAtTime(baseFreq - (beatFreq / 2), this.audioContext.currentTime);
+                this.binauralOsc2.frequency.setValueAtTime(baseFreq + (beatFreq / 2), this.audioContext.currentTime);
+                this.binauralOsc1.connect(this.ambianceGain);
+                this.binauralOsc2.connect(this.ambianceGain);
+                this.binauralOsc1.start();
+                this.binauralOsc2.start();
+            }
+            
+            playMeditationTrack(index = null) {
+                if (index !== null) this.currentTrackIndex = index;
+                if (this.activeSound) {
+                    this.activeSound.pause();
+                    this.activeSound = null;
+                }
+                
+                const track = this.meditationTracks[this.currentTrackIndex];
+                this.activeSound = new Audio(track.src);
+                this.activeSound.loop = true;
+                this.activeSound.play();
+                this.isPlaying = true;
+                
+                // Update player UI
+                document.getElementById('player-title').textContent = track.title;
+                document.getElementById('player-play').innerHTML = '<i class="fas fa-pause"></i>';
+                
+                return this.activeSound;
+            }
+            
+            togglePlayback() {
+                if (!this.activeSound) return;
+                
+                if (this.isPlaying) {
+                    this.activeSound.pause();
+                    document.getElementById('player-play').innerHTML = '<i class="fas fa-play"></i>';
+                } else {
+                    this.activeSound.play();
+                    document.getElementById('player-play').innerHTML = '<i class="fas fa-pause"></i>';
+                }
+                this.isPlaying = !this.isPlaying;
+            }
+            
+            nextTrack() {
+                this.currentTrackIndex = (this.currentTrackIndex + 1) % this.meditationTracks.length;
+                this.playMeditationTrack();
+            }
+            
+            prevTrack() {
+                this.currentTrackIndex = (this.currentTrackIndex - 1 + this.meditationTracks.length) % this.meditationTracks.length;
+                this.playMeditationTrack();
+            }
+
+            stopAllSounds() {
+                if (this.binauralOsc1) {
+                    this.binauralOsc1.stop();
+                    this.binauralOsc2.stop();
+                    this.binauralOsc1 = null;
+                    this.binauralOsc2 = null;
+                }
+                if (this.activeSound) {
+                    this.activeSound.pause();
+                    this.activeSound = null;
+                    this.isPlaying = false;
+                }
+            }
         }
-      } 
-    });
-    
-    overviewChart = new Chart(overviewCtx, { 
-      type: 'bar', 
-      data: { 
-        labels: ['Delta', 'Theta', 'Alpha', 'Beta', 'Gamma'], 
-        datasets: [{ 
-          label: 'Band (last)', 
-          data: [0, 0, 0, 0, 0],
-          backgroundColor: [
-            'rgba(124, 58, 237, 0.7)',
-            'rgba(14, 165, 233, 0.7)',
-            'rgba(34, 197, 94, 0.7)',
-            'rgba(249, 115, 22, 0.7)',
-            'rgba(239, 68, 68, 0.7)'
-          ],
-          borderColor: [
-            'rgb(124, 58, 237)',
-            'rgb(14, 165, 233)',
-            'rgb(34, 197, 94)',
-            'rgb(249, 115, 22)',
-            'rgb(239, 68, 68)'
-          ],
-          borderWidth: 1
-        }] 
-      }, 
-      options: { 
-        indexAxis: 'y', 
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { 
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: function(context) {
-                return `Value: ${context.raw.toFixed(4)}`;
-              }
+
+        // --- [ MAIN APPLICATION CLASS ] ---
+        class App {
+            constructor(rootEl) {
+                this.rootEl = rootEl;
+                this.state = {};
+                this.charts = {};
+                this.audioController = new AudioController();
+                this.coachMessages = [
+                    "Focus on your breathing to enhance concentration...",
+                    "Your cognitive performance is improving steadily...",
+                    "Try closing your eyes during meditation for deeper focus...",
+                    "Your reaction time is faster today - great progress!",
+                    "Deep breathing can help reduce mental fatigue...",
+                    "Notice how your mind wanders - gently bring it back...",
+                    "Your brainwave patterns show increased focus..."
+                ];
+                this.coachIcons = [
+                    'fa-lightbulb', 'fa-chart-line', 'fa-brain', 
+                    'fa-bolt', 'fa-wind', 'fa-mind-share', 'fa-wave-square'
+                ];
+                
+                this.loadState();
+                this.ui = new UIManager(this, this.rootEl);
             }
-          }
-        },
-        scales: {
-          x: {
-            grid: {
-              color: 'rgba(255, 255, 255, 0.05)'
+            
+            async init() {
+                this.ui.showLoader("Initializing EEG Worker...");
+                
+                this.ui.showLoader("Platform ready. Welcome back.");
+                this.state.system.ready = true;
+                this.update();
+                
+                this.audioController.playBinauralBeat(100, 10);
+                this.showCoachMessage(`Welcome, ${this.state.user.name}. Let's begin your cognitive journey.`, 'fa-hand-sparkles');
+                
+                // Start random coach messages
+                setInterval(() => {
+                    if (this.state.system.ready) {
+                        const randomIndex = Math.floor(Math.random() * this.coachMessages.length);
+                        this.showCoachMessage(
+                            this.coachMessages[randomIndex],
+                            this.coachIcons[randomIndex]
+                        );
+                    }
+                }, 30000);
             }
-          },
-          y: {
-            grid: {
-              color: 'rgba(255, 255, 255, 0.05)'
+            
+            loadState() {
+                const savedState = localStorage.getItem('neuroMindState');
+                if (savedState) {
+                    this.state = JSON.parse(savedState);
+                    this.state.game.inProgress = false;
+                } else {
+                    this.state = {
+                        system: { ready: false },
+                        ui: { activeTab: 'dashboard' },
+                        user: { name: 'Cogninaut', level: 1, xp: 0 },
+                        cognitiveProfile: { memory: 50, attention: 65, speed: 70, problemSolving: 55, flexibility: 60 },
+                        sessions: [],
+                        eeg: { bands: { delta: 0.1, theta: 0.2, alpha: 0.4, beta: 0.3 } },
+                        game: { inProgress: false }
+                    };
+                }
             }
-          }
+            
+            saveState() {
+                localStorage.setItem('neuroMindState', JSON.stringify(this.state));
+            }
+
+            update() {
+                this.ui.render(this.state);
+                this.saveState();
+            }
+            
+            handleAction(action, payload) {
+                Utils.log(`Action: ${action}`, payload || '');
+                this.audioController.playSound(ASSETS.SOUND_CLICK_B64);
+
+                switch (action) {
+                    case 'CHANGE_TAB':
+                        this.state.ui.activeTab = payload;
+                        if (payload === 'mindfulness') {
+                            this.showCoachMessage("Mindfulness practices can enhance focus and reduce stress.", 'fa-spa');
+                        }
+                        break;
+                    case 'TOGGLE_PLAYER':
+                        this.audioController.togglePlayback();
+                        break;
+                    case 'NEXT_TRACK':
+                        this.audioController.nextTrack();
+                        break;
+                    case 'PREV_TRACK':
+                        this.audioController.prevTrack();
+                        break;
+                    case 'START_MEDITATION':
+                        this.audioController.playMeditationTrack(payload);
+                        document.getElementById('media-player-container').style.display = 'block';
+                        this.showCoachMessage("Beginning meditation session. Focus on your breath...", 'fa-spa');
+                        break;
+                }
+                this.update();
+            }
+
+            showCoachMessage(text, icon = 'fa-robot') {
+                const container = document.getElementById('ai-coach-container');
+                const avatar = document.getElementById('ai-coach-avatar');
+                const message = document.getElementById('ai-coach-message');
+                
+                if (container && avatar && message) {
+                    container.style.display = 'flex';
+                    avatar.className = `fas ${icon} coach-pulse`;
+                    message.textContent = text;
+                    
+                    // Auto-hide after 8 seconds
+                    setTimeout(() => {
+                        container.style.display = 'none';
+                    }, 8000);
+                }
+            }
         }
-      } 
-    });
-  }
 
-  function runSimulatorForSession(session) {
-    if(!session || !session.trials || session.trials.length === 0) { 
-      alert('No session data'); 
-      return; 
-    }
-    
-    // Build sliding windows of trials
-    const windowSize = Math.max(2, Math.round((parseInt(document.getElementById('simWindow').value || '2', 10)));
-    const trials = session.trials;
-    bandsHistory = [];
-    
-    for(let i = 0; i < trials.length; i += windowSize) {
-      const win = trials.slice(i, i + windowSize);
-      const rts = win.filter(t => t.rt != null).map(t => t.rt);
-      const meanRT = rts.length ? (rts.reduce((a, b) => a + b, 0) / rts.length) : 900;
-      const rtStd = rts.length ? Math.sqrt(rts.map(x => Math.pow(x - meanRT, 2)).reduce((a, b) => a + b, 0) / rts.length) : 0;
-      const correct = win.filter(t => t.correct).length / Math.max(1, win.length);
-      const impulsive = win.filter(t => t.choice && t.correct === false && t.rt && t.rt < 180).length;
-      const totalErr = win.filter(t => t.correct === false).length;
-      
-      const metrics = { 
-        meanRT, 
-        accuracy: correct, 
-        rtStd, 
-        impulsiveErrors: impulsive, 
-        totalErrors: totalErr 
-      };
-      
-      const bands = behaviorToBands(metrics, { 
-        scale: parseFloat(document.getElementById('simScale').value || '5'), 
-        rFactor: 1.6 
-      });
-      
-      bandsHistory.push({ t: i, metrics, bands });
-    }
-    
-    // Update UI
-    const last = bandsHistory[bandsHistory.length - 1];
-    
-    if(last) {
-      document.getElementById('valDelta').innerText = last.bands.delta.toFixed(4);
-      document.getElementById('valTheta').innerText = last.bands.theta.toFixed(4);
-      document.getElementById('valAlpha').innerText = last.bands.alpha.toFixed(4);
-      document.getElementById('valBeta').innerText = last.bands.beta.toFixed(4);
-      document.getElementById('valGamma').innerText = last.bands.gamma.toFixed(4);
-      
-      overviewChart.data.datasets[0].data = [
-        last.bands.delta,
-        last.bands.theta,
-        last.bands.alpha,
-        last.bands.beta,
-        last.bands.gamma
-      ];
-      
-      overviewChart.update();
-    }
-    
-    // Plot timeseries
-    const labels = bandsHistory.map((b, idx) => 'w' + (idx + 1));
-    const datasets = [
-      { label: 'Delta', data: bandsHistory.map(b => b.bands.delta), borderColor: "#7c3aed", tension: 0.2, fill: false },
-      { label: 'Theta', data: bandsHistory.map(b => b.bands.theta), borderColor: "#0ea5e9", tension: 0.2, fill: false },
-      { label: 'Alpha', data: bandsHistory.map(b => b.bands.alpha), borderColor: "#22c55e", tension: 0.2, fill: false },
-      { label: 'Beta',  data: bandsHistory.map(b => b.bands.beta),  borderColor: "#f97316", tension: 0.2, fill: false },
-      { label: 'Gamma', data: bandsHistory.map(b => b.bands.gamma), borderColor: "#ef4444", tension: 0.2, fill: false }
-    ];
-    
-    bandsChart.data.labels = labels;
-    bandsChart.data.datasets = datasets;
-    bandsChart.update();
-    
-    log('Ran EEG simulation for session: ' + session.id);
-  }
+        // --- [ UI MANAGER CLASS ] ---
+        class UIManager {
+            constructor(app, rootEl) {
+                this.app = app;
+                this.rootEl = rootEl;
+                this.three = { scene: null, camera: null, renderer: null, brain: null };
+            }
+            
+            showLoader(text) {
+                const status = document.getElementById('loader-status');
+                if (status) status.textContent = text;
+            }
+            
+            render(state) {
+                const { ui, system } = state;
+                if (!system.ready) return;
 
-  document.getElementById('runSim').addEventListener('click', () => {
-    const sessions = loadSessions();
-    if(!sessions.length) return alert('No sessions to simulate. Run a game first.');
-    runSimulatorForSession(sessions[0]);
-  });
+                const content = this.renderTabContent(ui.activeTab, state);
 
-  // Replay last: run simulator for last session
-  document.getElementById('replayLast').addEventListener('click', () => {
-    const sessions = loadSessions();
-    if(!sessions.length) return alert('No sessions');
-    const s = sessions[0]; 
-    runSimulatorForSession(s);
-    log('Replayed last session simulation');
-  });
+                this.rootEl.innerHTML = `
+                    <header>
+                        <div class="logo">NeuroMind Pro</div>
+                        <nav class="nav-tabs">
+                            <button class="tab-btn ${ui.activeTab === 'dashboard' ? 'active' : ''}" data-action="CHANGE_TAB" data-payload="dashboard"><i class="fas fa-home"></i> Dashboard</button>
+                            <button class="tab-btn ${ui.activeTab === 'neuro-game' ? 'active' : ''}" data-action="CHANGE_TAB" data-payload="neuro-game"><i class="fas fa-gamepad"></i> Training</button>
+                            <button class="tab-btn ${ui.activeTab === 'analysis' ? 'active' : ''}" data-action="CHANGE_TAB" data-payload="analysis"><i class="fas fa-brain"></i> EEG Analysis</button>
+                            <button class="tab-btn ${ui.activeTab === 'progress' ? 'active' : ''}" data-action="CHANGE_TAB" data-payload="progress"><i class="fas fa-chart-line"></i> Progress</button>
+                            <button class="tab-btn ${ui.activeTab === 'mindfulness' ? 'active' : ''}" data-action="CHANGE_TAB" data-payload="mindfulness"><i class="fas fa-spa"></i> Mindfulness</button>
+                        </nav>
+                    </header>
+                    <main class="tab-content active">${content}</main>
+                `;
+                this.attachEventListeners();
+                this.postRender(state);
+            }
+            
+            renderDashboard(state) {
+                return `
+                    <div class="page-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title"><i class="fas fa-brain"></i> Cognitive Profile</div>
+                            </div>
+                            <div class="radar-chart-container">
+                                <canvas id="radarChart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title"><i class="fas fa-tasks"></i> Daily Goals</div>
+                            </div>
+                            <div class="progress-grid">
+                                <div>
+                                    <div class="hud-item">
+                                        <div class="hud-label">Meditation</div>
+                                        <div class="hud-value">0/10 min</div>
+                                    </div>
+                                    <div class="hud-item">
+                                        <div class="hud-label">Training</div>
+                                        <div class="hud-value">0/3 sessions</div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button class="button" data-action="START_MEDITATION" data-payload="0">Start Meditation</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title"><i class="fas fa-chart-line"></i> Weekly Progress</div>
+                            </div>
+                            <div class="trend-chart-container">
+                                <canvas id="trendChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            renderTabContent(tab, state) {
+                switch (tab) {
+                    case 'dashboard': return this.renderDashboard(state);
+                    case 'mindfulness': return this.renderMindfulness(state);
+                    default: return `<div class="card"><p>Module under development</p></div>`;
+                }
+            }
+            
+            renderMindfulness(state) {
+                return `
+                    <div class="page-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title"><i class="fas fa-spa"></i> Guided Meditations</div>
+                            </div>
+                            <div class="meditation-options">
+                                <div class="meditation-option" data-action="START_MEDITATION" data-payload="0">
+                                    <i class="fas fa-water"></i>
+                                    <span>Ocean Waves</span>
+                                </div>
+                                <div class="meditation-option" data-action="START_MEDITATION" data-payload="1">
+                                    <i class="fas fa-tree"></i>
+                                    <span>Forest Ambience</span>
+                                </div>
+                                <div class="meditation-option" data-action="START_MEDITATION" data-payload="2">
+                                    <i class="fas fa-cloud-rain"></i>
+                                    <span>Gentle Rain</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title"><i class="fas fa-brain"></i> Mindfulness Tips</div>
+                            </div>
+                            <div class="mindfulness-tips">
+                                <p>• Focus on your breath to anchor your attention</p>
+                                <p>• Notice thoughts without judgment, let them pass</p>
+                                <p>• Start with 5-minute sessions and gradually increase</p>
+                                <p>• Practice daily for best results</p>
+                            </div>
+                        </div>
+                    </div>
+                    <style>
+                        .meditation-options {
+                            display: grid;
+                            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                            gap: 1rem;
+                            margin-top: 1rem;
+                        }
+                        .meditation-option {
+                            background: var(--glass);
+                            border-radius: 8px;
+                            padding: 1rem;
+                            text-align: center;
+                            cursor: pointer;
+                            transition: all 0.3s;
+                        }
+                        .meditation-option:hover {
+                            background: var(--primary);
+                            transform: translateY(-5px);
+                        }
+                        .meditation-option i {
+                            font-size: 2rem;
+                            margin-bottom: 0.5rem;
+                            display: block;
+                        }
+                        .mindfulness-tips p {
+                            margin-bottom: 0.8rem;
+                            padding-left: 1.5rem;
+                            position: relative;
+                        }
+                        .mindfulness-tips p:before {
+                            content: "•";
+                            position: absolute;
+                            left: 0;
+                            color: var(--primary-light);
+                        }
+                    </style>
+                `;
+            }
 
-  // ---------- Session view & export ----------
-  document.getElementById('viewSession').addEventListener('click', () => {
-    const id = document.getElementById('sessionSelect').value;
-    if(!id) return alert('Select a session');
-    
-    const sessions = loadSessions(); 
-    const s = sessions.find(x => x.id === id);
-    if(!s) return alert('Session not found');
-    
-    const details = document.getElementById('sessionDetails');
-    const trials = s.trials || [];
-    const rtValues = trials.filter(t => t.rt != null).map(t => t.rt);
-    const meanRT = rtValues.length ? Math.round(rtValues.reduce((a, b) => a + b, 0) / rtValues.length) : 0;
-    const acc = Math.round(trials.filter(t => t.correct).length / Math.max(1, trials.length) * 100);
-    
-    details.innerHTML = `
-      <div class="neuroapp-card">
-        <h4>Session: ${s.type} — ${new Date(s.created_at).toLocaleString()}</h4>
-        <div class="neuroapp-small">Trials: ${trials.length} • Mean RT: ${meanRT}ms • Accuracy: ${acc}%</div>
-        <pre style="margin-top:12px;background:rgba(0,0,0,0.2);padding:12px;border-radius:8px;overflow:auto;max-height:200px;color:var(--text);">
-${JSON.stringify(s, null, 2)}
-        </pre>
-      </div>
-    `;
-  });
-  
-  document.getElementById('downloadRaw').addEventListener('click', () => {
-    const id = document.getElementById('sessionSelect').value;
-    if(!id) return alert('Select a session');
-    
-    const sessions = loadSessions(); 
-    const s = sessions.find(x => x.id === id);
-    if(!s) return alert('Session not found');
-    
-    const blob = new Blob([JSON.stringify(s, null, 2)], {type: 'application/json'});
-    const a = document.createElement('a'); 
-    a.href = URL.createObjectURL(blob); 
-    a.download = `${s.type}_${s.id}.json`; 
-    a.click();
-    log(`Downloaded raw data for session: ${s.id}`);
-  });
-  
-  document.getElementById('deleteSession').addEventListener('click', () => {
-    const id = document.getElementById('sessionSelect').value;
-    if(!id) return alert('Select a session');
-    if(!confirm('Delete session?')) return;
-    
-    deleteSessionById(id); 
-    log('Deleted session ' + id);
-  });
+            attachEventListeners() {
+                this.rootEl.addEventListener('click', (e) => {
+                    const target = e.target.closest('[data-action]');
+                    if (target) {
+                        const { action, payload } = target.dataset;
+                        this.app.handleAction(action, payload);
+                    }
+                });
+                
+                // Player controls
+                document.getElementById('player-play')?.addEventListener('click', () => {
+                    this.app.handleAction('TOGGLE_PLAYER');
+                });
+                document.getElementById('player-next')?.addEventListener('click', () => {
+                    this.app.handleAction('NEXT_TRACK');
+                });
+                document.getElementById('player-prev')?.addEventListener('click', () => {
+                    this.app.handleAction('PREV_TRACK');
+                });
+            }
+            
+            postRender(state) {
+                // Initialize charts
+                this.initCharts();
+            }
+            
+            initCharts() {
+                // Radar Chart (Cognitive Profile)
+                const radarCtx = document.getElementById('radarChart')?.getContext('2d');
+                if (radarCtx) {
+                    new Chart(radarCtx, {
+                        type: 'radar',
+                        data: {
+                            labels: ['Memory', 'Attention', 'Speed', 'Problem Solving', 'Flexibility'],
+                            datasets: [{
+                                label: 'Your Profile',
+                                data: [
+                                    this.app.state.cognitiveProfile.memory,
+                                    this.app.state.cognitiveProfile.attention,
+                                    this.app.state.cognitiveProfile.speed,
+                                    this.app.state.cognitiveProfile.problemSolving,
+                                    this.app.state.cognitiveProfile.flexibility
+                                ],
+                                backgroundColor: 'rgba(128, 90, 213, 0.2)',
+                                borderColor: 'rgba(128, 90, 213, 1)',
+                                pointBackgroundColor: 'rgba(128, 90, 213, 1)',
+                                pointBorderColor: '#fff',
+                                pointHoverBackgroundColor: '#fff',
+                                pointHoverBorderColor: 'rgba(128, 90, 213, 1)'
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                r: {
+                                    angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
+                                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                                    pointLabels: { color: 'var(--text)' },
+                                    suggestedMin: 0,
+                                    suggestedMax: 100
+                                }
+                            },
+                            plugins: {
+                                legend: { labels: { color: 'var(--text)' } }
+                            }
+                        }
+                    });
+                }
+                
+                // Trend Chart (Weekly Progress)
+                const trendCtx = document.getElementById('trendChart')?.getContext('2d');
+                if (trendCtx) {
+                    new Chart(trendCtx, {
+                        type: 'line',
+                        data: {
+                            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                            datasets: [{
+                                label: 'Cognitive Score',
+                                data: [65, 72, 68, 75, 80, 78, 82],
+                                borderColor: 'rgba(56, 161, 105, 1)',
+                                backgroundColor: 'rgba(56, 161, 105, 0.1)',
+                                tension: 0.3,
+                                fill: true
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                y: {
+                                    min: 50,
+                                    max: 100,
+                                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                                    ticks: { color: 'var(--text-muted)' }
+                                },
+                                x: {
+                                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                                    ticks: { color: 'var(--text-muted)' }
+                                }
+                            },
+                            plugins: {
+                                legend: { labels: { color: 'var(--text)' } }
+                            }
+                        }
+                    });
+                }
+            }
+        }
 
-  // Export all sessions
-  document.getElementById('exportAll').addEventListener('click', () => {
-    const arr = loadSessions();
-    const blob = new Blob([JSON.stringify(arr, null, 2)], {type: 'application/json'});
-    const a = document.createElement('a'); 
-    a.href = URL.createObjectURL(blob); 
-    a.download = `neuro_sessions_${Date.now()}.json`; 
-    a.click();
-    log('Exported all sessions');
-  });
-
-  // Generate PDF report
-  document.getElementById('genReport').addEventListener('click', () => {
-    const sessions = loadSessions();
-    if(!sessions.length) return alert('No sessions to report');
-    
-    const s = sessions[0];
-    const win = window.open('', '_blank');
-    const html = `
-      <html>
-        <head>
-          <title>Report ${s.id}</title>
-          <style>
-            body { font-family: sans-serif; padding: 20px; }
-            h2 { color: #4361ee; }
-            pre { background: #f6fbff; padding: 10px; border-radius: 5px; }
-          </style>
-        </head>
-        <body>
-          <h2>NeuroApp Report — ${s.type}</h2>
-          <div><strong>When:</strong> ${new Date(s.created_at).toLocaleString()}</div>
-          <div><strong>Trials:</strong> ${s.trials.length}</div>
-          <pre>${JSON.stringify(s, null, 2)}</pre>
-        </body>
-      </html>`;
-    
-    win.document.write(html); 
-    win.document.close();
-    log('Generated report for session: ' + s.id);
-  });
-
-  // Tab navigation for NeuroApp
-  document.querySelectorAll('.neuroapp-tab').forEach(t => {
-    t.addEventListener('click', (ev) => {
-      document.querySelectorAll('.neuroapp-tab').forEach(x => x.classList.remove('active'));
-      t.classList.add('active');
-      
-      const tab = t.getAttribute('data-tab');
-      document.querySelectorAll('[id^="tab-"]').forEach(el => el.style.display = 'none');
-      
-      const el = document.getElementById('tab-' + tab);
-      if(el) el.style.display = 'block';
-      
-      // Initialize charts when EEG Simulator tab is opened
-      if(tab === 'eegsim' && !bandsChart) {
-        initCharts();
-      }
-    });
-  });
-
-  // Clear sessions
-  document.getElementById('clearSessions').addEventListener('click', () => { 
-    if(confirm('Clear all session data?')){ 
-      localStorage.removeItem(S_KEY); 
-      refreshUI(); 
-      log('Cleared all sessions'); 
-    } 
-  });
-
-  // Quick demo session generator
-  document.getElementById('startDemo').addEventListener('click', () => {
-    // Create simple reaction session with synthetic RTs
-    const trials = [];
-    
-    for(let i = 0; i < 12; i++){
-      const rt = 300 + Math.round(Math.random() * 400);
-      const correct = Math.random() > 0.15;
-      trials.push({
-        rt, 
-        choice: correct ? (Math.random() > 0.5 ? 'red' : 'green') : (Math.random() > 0.5 ? 'red' : 'green'), 
-        stim: (Math.random() > 0.5 ? 'red' : 'green'), 
-        correct,
-        t_perf: performance.now(),
-        t_epoch: Date.now()
-      });
-    }
-    
-    const s = { 
-      id: uid(), 
-      type: 'reaction-demo', 
-      trials, 
-      created_at: Date.now() 
-    };
-    
-    saveSession(s); 
-    log('Demo session created');
-  });
-
-  // On load
-  refreshUI();
-  log('NeuroApp module ready');
-
-  // Initialize the app
-  initCharts();
-  </script>
+        // Initialize the application
+        new App(document.getElementById('app-root')).init();
+    </script>
 </body>
 </html>
